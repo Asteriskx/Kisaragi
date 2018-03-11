@@ -1,6 +1,9 @@
 # Kisaragi
 Kisaragi is TimeSignal Application for .NET
 
+## Kisaragi is 何？
+作業に没頭する人向けの、時間お知らせサポートアプリですっっ('ω')
+
 ## License for Kisaragi
 MIT
 
