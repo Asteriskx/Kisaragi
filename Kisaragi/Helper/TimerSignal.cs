@@ -67,9 +67,9 @@ namespace Kisaragi.Helper
 		#endregion
 
 		/// <summary>
-		/// 非同期で時間の変化に伴って、時間を知らせるボイスを選択します。
+		/// 非同期で時間の変化に伴って、イベントを発火させます。
 		/// </summary>
-		public async Task SelectTimerSignalVoiceAsync()
+		public async Task InvokingTimerSignalEventIgnitionAsync()
 		{
 			_Polling = new System.Timers.Timer(_interval);
 

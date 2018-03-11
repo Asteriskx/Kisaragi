@@ -70,7 +70,7 @@ namespace Kisaragi
 					WriteLine("voiceSettings.json は既に生成済みです。");
 
 				await _Json.LoadSettingFileAsync();
-				await _TimerSignal.SelectTimerSignalVoiceAsync();
+				await _TimerSignal.InvokingTimerSignalEventIgnitionAsync();
 				_isSubscribed = true;
 			}
 		}
