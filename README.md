@@ -12,7 +12,7 @@ MIT
   - Windows 10 Home
 
 - IDE
-  - Visual Studio 2017 Community
+  - Visual Studio 2017 Community (.NET Framework 4.6.1)
   - Visual Studio Code 1.12
   - SmartGit
   
