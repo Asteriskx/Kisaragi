@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Console;
 
@@ -30,10 +31,14 @@ namespace Kisaragi
 
 		#endregion
 
+		#region Field Valiable
+
 		/// <summary>
 		/// イベントが購読される準備が完了したか
 		/// </summary>
 		private bool _isSubscribed = false;
+
+		#endregion
 
 		#region Constractor
 
@@ -54,6 +59,8 @@ namespace Kisaragi
 		}
 
 		#endregion
+
+		#region Kisaragi MainThread Method's.
 
 		/// <summary>
 		/// Kisaragi が起動した時に実行されるメソッド
@@ -84,7 +91,7 @@ namespace Kisaragi
 		/// <summary>
 		/// Torst & Baloon Notify Settings.
 		/// </summary>
-		private void SettingNotifyProperties(Utils<int> e) =>
+		private void _SettingNotifyProperties(Utils<int> e) =>
 			this.notifyIcon.BalloonTipText = $"{e.Args} 時だにゃーん('ω')";
 
 		/// <summary>
@@ -95,9 +102,9 @@ namespace Kisaragi
 			var os = Environment.OSVersion;
 
 			if (os.Version.Major >= 6 && os.Version.Minor >= 2)
-				SettingNotifyProperties(e); // トースト通知 : Windows 8 以降
+				_SettingNotifyProperties(e); // トースト通知 : Windows 8 以降
 			else
-				SettingNotifyProperties(e); // バルーン通知 : Windows 8 以前
+				_SettingNotifyProperties(e); // バルーン通知 : Windows 8 以前
 
 			this.notifyIcon.ShowBalloonTip(1000);
 
@@ -110,7 +117,10 @@ namespace Kisaragi
 			*/
 
 			// ♰U s i n g♰
-			this.Invoke(new Action(async () => await _TimerSignal.Helpers._PlayingVoiceAsync(_Json.Settings[e.Args])));
+			this.Invoke(new Func<Task>(async () => await _TimerSignal.Helpers._PlayingVoiceAsync(_Json.Settings[e.Args])));
 		}
+
+		#endregion
+
 	}
 }

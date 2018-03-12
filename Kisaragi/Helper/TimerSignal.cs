@@ -33,9 +33,9 @@ namespace Kisaragi.Helper
 		#region Field Valiable
 
 		/// <summary>
-		/// 過去時間の保存用
+		/// 経過時間(過去)を保存します
 		/// </summary>
-		public int oldHour;
+		public int elapsedTime;
 
 		/// <summary>
 		/// 監視する間隔
@@ -56,15 +56,15 @@ namespace Kisaragi.Helper
 
 		#region Constractor
 
-		public TimerSignal() { }
-
 		public TimerSignal(int interval)
 		{
-			oldHour = DateTime.Now.Hour;
+			elapsedTime = DateTime.Now.Hour;
 			_interval = interval;
 		}
 
 		#endregion
+
+		#region EventIgnition Logic.
 
 		/// <summary>
 		/// 非同期で時間の変化に伴って、イベントを発火させます。
@@ -77,16 +77,19 @@ namespace Kisaragi.Helper
 			_Polling.Elapsed += (s, e) =>
 			{
 				// 現在時間の監視
-				if (oldHour != DateTime.Now.Hour)
+				if (elapsedTime != DateTime.Now.Hour)
 				{
 					// 今回値で前回時間を更新
-					oldHour = DateTime.Now.Hour;
+					elapsedTime = DateTime.Now.Hour;
 
 					// ♰イベント発火♰
-					MonitoringTimeChanged?.Invoke(null, new Utils<int>(oldHour));
+					MonitoringTimeChanged?.Invoke(null, new Utils<int>(elapsedTime));
 				}
 			};
 			_Polling.Start();
 		}
+
+		#endregion
+
 	}
 }
