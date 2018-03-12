@@ -15,6 +15,11 @@ namespace Kisaragi.Helper
 		#region Properties
 
 		/// <summary>
+		/// Kisaragi 時報システムのヘルパクラス インスタンス
+		/// </summary>
+		public Helpers Helpers { get; set; } = new Helpers();
+
+		/// <summary>
 		/// 時間の変化を監視するために使用するタイマ
 		/// </summary>
 		private System.Timers.Timer _Polling { get; set; }
@@ -68,7 +73,8 @@ namespace Kisaragi.Helper
 			_Polling.Elapsed += (s, e) =>
 			{
 				// 現在時間の監視
-				if (elapsedTime != DateTime.Now.Hour)
+				//if (elapsedTime != DateTime.Now.Hour)
+				if (elapsedTime != DateTime.Now.Minute % 24)
 				{
 					// 今回値で前回時間を更新
 					elapsedTime = DateTime.Now.Hour;
