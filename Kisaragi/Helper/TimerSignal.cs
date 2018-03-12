@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using static System.Console;
 
 using Kisaragi.Util;
 
@@ -12,16 +13,6 @@ namespace Kisaragi.Helper
 	{
 
 		#region Properties
-
-		/// <summary>
-		/// Kisaragi 時報システムのヘルパクラス インスタンス
-		/// </summary>
-		public Helpers Helpers { get; set; } = new Helpers();
-
-		/// <summary>
-		/// 音声ファイル再生に関しての情報を管理するクラス(Jsonファイル R/W) インスタンス
-		/// </summary>
-		public SettingJson Setting { get; set; } = new SettingJson();
 
 		/// <summary>
 		/// 時間の変化を監視するために使用するタイマ
@@ -85,7 +76,10 @@ namespace Kisaragi.Helper
 					// ♰イベント発火♰
 					MonitoringTimeChanged?.Invoke(null, new Utils<int>(elapsedTime));
 				}
+
+				WriteLine($"現在時刻 = {DateTime.Now.Hour}:{DateTime.Now.Minute}:{DateTime.Now.Second}");
 			};
+
 			_Polling.Start();
 		}
 
