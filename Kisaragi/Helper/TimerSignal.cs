@@ -15,11 +15,6 @@ namespace Kisaragi.Helper
 		#region Properties
 
 		/// <summary>
-		/// Kisaragi 時報システムのヘルパクラス インスタンス
-		/// </summary>
-		public Helpers Helpers { get; set; } = new Helpers();
-
-		/// <summary>
 		/// 時間の変化を監視するために使用するタイマ
 		/// </summary>
 		private System.Timers.Timer _Polling { get; set; }
@@ -37,6 +32,10 @@ namespace Kisaragi.Helper
 		/// 監視する間隔
 		/// </summary>
 		private int _interval;
+
+		#endregion
+
+		#region Defined EventHandler
 
 		/// <summary>
 		/// 時間が経過し、変化したタイミングを監視するイベントハンドラ
