@@ -9,7 +9,7 @@ namespace Kisaragi.Helper
 	/// <summary>
 	/// Kisaragi 時報管理クラス
 	/// </summary>
-	public class TimerSignal
+	public class TimerSignal : IKisaragi
 	{
 
 		#region Properties
@@ -37,10 +37,6 @@ namespace Kisaragi.Helper
 		/// 監視する間隔
 		/// </summary>
 		private int _interval;
-
-		#endregion
-
-		#region Defined EventHandler
 
 		/// <summary>
 		/// 時間が経過し、変化したタイミングを監視するイベントハンドラ
@@ -73,8 +69,7 @@ namespace Kisaragi.Helper
 			_Polling.Elapsed += (s, e) =>
 			{
 				// 現在時間の監視
-				//if (elapsedTime != DateTime.Now.Hour)
-				if (elapsedTime != DateTime.Now.Minute % 24)
+				if (elapsedTime != DateTime.Now.Hour)
 				{
 					// 今回値で前回時間を更新
 					elapsedTime = DateTime.Now.Hour;

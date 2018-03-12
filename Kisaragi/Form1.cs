@@ -25,6 +25,11 @@ namespace Kisaragi
 		private TimerSignal _TimerSignal { get; set; } = new TimerSignal(1000);
 
 		/// <summary>
+		/// Kisaragi 時報システムのヘルパクラス インスタンス
+		/// </summary>
+		public Helpers Helpers { get; set; } = new Helpers();
+
+		/// <summary>
 		/// 音声ファイル再生に関しての情報を管理するクラス(Jsonファイル R/W) インスタンス
 		/// </summary>
 		private SettingJson _Json { get; set; } = new SettingJson();
@@ -69,15 +74,15 @@ namespace Kisaragi
 		{
 			if (!_isSubscribed)
 			{
-
 				//音声設定ファイルがない場合、設定ファイルを作成
-				if (File.Exists("voiceSettings.json") == false)
+				if (!File.Exists("voiceSettings.json"))
 					await _Json.CreateVoiceSettingFileAsync();
 				else
 					WriteLine("voiceSettings.json は既に生成済みです。");
 
 				await _Json.LoadSettingFileAsync();
 				await _TimerSignal.InvokingTimerSignalEventIgnitionAsync();
+
 				_isSubscribed = true;
 			}
 		}
@@ -117,7 +122,7 @@ namespace Kisaragi
 			*/
 
 			// ♰U s i n g♰
-			this.Invoke(new Func<Task>(async () => await _TimerSignal.Helpers._PlayingVoiceAsync(_Json.Settings[e.Args])));
+			this.Invoke(new Func<Task>(async () => await Helpers._PlayingVoiceAsync(_Json.Settings[e.Args])));
 		}
 
 		#endregion
