@@ -80,6 +80,7 @@ namespace Kisaragi.Helper
 				WriteLine($"現在時刻 = {DateTime.Now.Hour}:{DateTime.Now.Minute}:{DateTime.Now.Second}");
 			};
 
+			// ポーリング開始
 			_Polling.Start();
 		}
 
