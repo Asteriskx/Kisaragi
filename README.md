@@ -7,6 +7,7 @@ Kisaragi is TimeSignal Application for .NET
 
 2018-03-13 時点：  
 - タスクトレイ機能に対応中  
+- UML 図のコミット完了(今後、適宜修正が入ります。)
 
 ## License for Kisaragi
 MIT License
