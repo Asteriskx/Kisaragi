@@ -15,7 +15,6 @@ class Kisaragi {
 }
 
 class TimerSignal {
-    + public Helpers Helpers { get; set; } = new Helpers();
     + public SettingJson Setting { get; set; } = new SettingJson();
     - private System.Timers.Timer _Polling { get; set; }
     + public int elapsedTime;
