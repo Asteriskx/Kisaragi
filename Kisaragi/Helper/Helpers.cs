@@ -12,9 +12,8 @@ namespace Kisaragi.Helper
 	/// </summary>
 	public class Helpers
 	{
-		#region Field Variable
+		#region readonly Variable
 
-		private bool _IsClosed;
 		private static readonly string _AliasName = "MediaFile";
 
 		#endregion
@@ -53,35 +52,22 @@ namespace Kisaragi.Helper
 				cmd = "play " + _AliasName;
 				mciSendString(cmd, status, status.Capacity, IntPtr.Zero);
 
-				// 時報システム が終了される時
-				if (_IsClosed)
+				// 再生状態の監視
+				do
 				{
-					_IsClosed = false;
+					Console.WriteLine($"playState = {status.ToString()}");
 
-					// 終了メッセージ、ボイスを再生
-					// ボイスが指定されない場合は、例外発生。
-					new KisaragiMessageBox("時報システムを終了します。", "Kisaragi 時報システム終了", 2000);
-				}
-				else
-				{
-					// 再生状態の監視
-					do
-					{
-						Console.WriteLine($"playState = {status.ToString()}");
+					// 再生状態の取得
+					jdg = $"status { _AliasName} mode";
+					mciSendString(jdg, status, status.Capacity, IntPtr.Zero);
 
-						// 再生状態の取得
-						jdg = $"status { _AliasName} mode";
-						mciSendString(jdg, status, status.Capacity, IntPtr.Zero);
+					// 意図的な待ち時間
+					await Task.Delay(1000);
 
-						// 意図的な待ち時間
-						await Task.Delay(1000);
+				} while (status.ToString() == "playing");
 
-					} while (status.ToString() == "playing");
-
-					// 音声ファイル停止・そっ閉じ
-					await _StoppedVoiceAsync();
-
-				}
+				// 音声ファイル停止・そっ閉じ
+				await _StoppedVoiceAsync();
 			}
 			catch (ApplicationException ex)
 			{

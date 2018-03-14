@@ -34,6 +34,11 @@ namespace Kisaragi
 		/// </summary>
 		private SettingJson _Json { get; set; } = new SettingJson();
 
+		/// <summary>
+		/// Kisaragi バージョン情報を管理するクラス インスタンス
+		/// </summary>
+		private VersionWindow _Version { get; set; }
+
 		#endregion
 
 		#region Field Valiable
@@ -53,14 +58,6 @@ namespace Kisaragi
 
 			// イベント登録 (Cで言うところの関数ポインタちっくな something.)
 			_TimerSignal.MonitoringTimeChanged += _IsMonitoringTimeChanged;
-
-			// bitmap を Icon に変換するためにごにょごにょしてる
-			var handle = Properties.Resources.logo.GetHicon();
-			this.notifyIcon.Icon = Icon.FromHandle(handle);
-
-			this.notifyIcon.Text = "Kisaragi";
-			this.notifyIcon.BalloonTipTitle = "Kisaragi 時報";
-			this.notifyIcon.Visible = true;
 		}
 
 		#endregion
@@ -72,6 +69,16 @@ namespace Kisaragi
 		/// </summary>
 		private async void Form1_Load(object sender, EventArgs e)
 		{
+			// bitmap を Icon に変換するためにごにょごにょしてる
+			var handle = Properties.Resources.logo.GetHicon();
+			this.notifyIcon.Icon = Icon.FromHandle(handle);
+
+			// タスクトレイ通知部分 設定
+			this.notifyIcon.Text = "Kisaragi";
+			this.notifyIcon.BalloonTipTitle = "Kisaragi 時報";
+			this.notifyIcon.ContextMenuStrip = this.ContextMenu;
+			this.notifyIcon.Visible = true;
+
 			if (!_isSubscribed)
 			{
 				//音声設定ファイルがない場合、設定ファイルを作成
@@ -85,6 +92,24 @@ namespace Kisaragi
 
 				_isSubscribed = true;
 			}
+			await _SettingKisaragiTasktrayAsync();
+
+		}
+
+		private async Task _SettingKisaragiTasktrayAsync()
+		{
+			VersionInfo.Click += (s, ee) =>
+			{
+				_Version = new VersionWindow();
+				_Version.Show();
+			};
+
+			ExitKisaragi.Click += (s, ee) =>
+			{
+				this.Invoke(new Func<Task>(async () => await Helpers._PlayingVoiceAsync(_Json.Settings[24])));
+				new KisaragiMessageBox("時報システムを終了します。", "Kisaragi 時報システム終了", 1500);
+				this.Close();
+			};
 		}
 
 		/// <summary>
