@@ -1,6 +1,7 @@
 # Kisaragi
 Kisaragi is TimeSignal Application for .NET
 
+![KisaragiInfo](KisaragiInfo.png)
 ## Kisaragi is 何？
 作業に没頭する人向けの、時間お知らせサポートアプリですっっ('ω')  
 今のところ、1時間毎に通知を出してくれるようです。  
