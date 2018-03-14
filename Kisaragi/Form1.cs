@@ -96,6 +96,9 @@ namespace Kisaragi
 
 		}
 
+		/// <summary>
+		/// タスクトレイアイコンの動作ロジック定義
+		/// </summary>
 		private async Task _SettingKisaragiTasktrayAsync()
 		{
 			VersionInfo.Click += (s, ee) =>
