@@ -12,7 +12,11 @@ Kisaragi is TimeSignal Application for .NET
 
 2018-03-15 時点：  
 - Twitter へ投稿するために、投稿ライブラリを作成しました。まだコミットしてません。
-- version 1.0 リリースに向けて、絶賛リファクタリング中。
+- version 1.0 リリースに向けて、絶賛リファクタリング中。  
+
+2018-03-21 時点： 
+- OAuth1.0a 及び 2.0 に対応するべく、全体的な アクセスAPI を構築中。
+　認証は Pass したが、 GET, POST の投稿で Failed している状況。
 
 ## License for Kisaragi
 MIT License
