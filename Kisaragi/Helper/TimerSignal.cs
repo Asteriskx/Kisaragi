@@ -76,9 +76,10 @@ namespace Kisaragi.Helper
 					// ♰イベント発火♰
 					MonitoringTimeChanged?.Invoke(null, new Utils<int>(elapsedTime));
 				}
-
-				WriteLine($"現在時刻 = {DateTime.Now.Hour}:{DateTime.Now.Minute}:{DateTime.Now.Second}");
 			};
+
+			// 待ち
+			await Task.Delay(10);
 
 			// ポーリング開始
 			_Polling.Start();

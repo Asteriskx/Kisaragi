@@ -37,6 +37,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,12 +58,21 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helper\Helpers.cs" />
     <Compile Include="Helper\KisaragiMessageBox.cs" />
+    <Compile Include="Helper\SoundHelpers.cs" />
+    <Compile Include="TwitterAPI\OAuth\AuthKisagari.cs" />
     <Compile Include="Helper\TimerSignal.cs" />
+    <Compile Include="TwitterAPI\OAuth\Credentials.cs" />
+    <Compile Include="TwitterAPI\OAuth\OAuthWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TwitterAPI\OAuth\OAuthWindow.Designer.cs">
+      <DependentUpon>OAuthWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helper\SettingJson.cs" />
+    <Compile Include="TwitterAPI\Twitter.cs" />
     <Compile Include="Util\IKisaragi.cs" />
     <Compile Include="Util\Utils.cs" />
     <Compile Include="VersionWindow.cs">
@@ -70,6 +83,9 @@
     </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TwitterAPI\OAuth\OauthWindow.resx">
+      <DependentUpon>OAuthWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -102,16 +118,16 @@
     <None Include="logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\no-translate-detected_318-41747.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\GitHub-Mark.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Twitter_Social_Icon_Circle_Color.png" />
+    <None Include="Resources\twitter.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\twitter.png" />
+    <None Include="Resources\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\asterisk.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
