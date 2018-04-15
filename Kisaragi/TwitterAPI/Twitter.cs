@@ -29,7 +29,7 @@ namespace Kisaragi.TwitterAPI
 		{
 			_Client = client;
 			Auth = new AuthKisaragi(client);
-			Credentials = new Credentials(consumerKey, consumerKeySecret);
+			Credentials = new Credentials(consumerKey, consumerKeySecret, accessToken, accessTokenSecret);
 		}
 
 		/// <summary>

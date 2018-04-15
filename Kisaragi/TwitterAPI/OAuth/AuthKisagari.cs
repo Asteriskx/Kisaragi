@@ -173,7 +173,8 @@ namespace Kisaragi.TwitterAPI.OAuth
 					response = await Http.SendAsync(request);
 
 					if (response.StatusCode != HttpStatusCode.OK)
-						throw new HttpRequestException($"HTTP 通信エラーが発生しました。ステータス : {response.StatusCode} 対象：HttpMultiRequestAsync()");
+						throw new HttpRequestException($"HTTP 通信エラーが発生しました。" +
+							$"ステータス : {response.StatusCode} {await response.Content.ReadAsStringAsync()} 対象：HttpMultiRequestAsync()");
 				}
 				catch (HttpRequestException e) { tmp = e; }
 			});
@@ -273,7 +274,7 @@ namespace Kisaragi.TwitterAPI.OAuth
 		/// </summary>
 		public string UrlEncode(string value)
 		{
-			string unreserved = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~()";
+			string unreserved = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 			var result = new StringBuilder();
 
 			foreach (var b in Encoding.UTF8.GetBytes(value))
