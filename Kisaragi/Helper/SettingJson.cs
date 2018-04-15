@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Kisaragi.Helper
 {
 	/// <summary>
-	/// 音声ファイル再生に関しての情報を管理するクラス(Jsonファイル R/W)
+	/// 各種設定ファイルの情報を管理するクラス(Jsonファイル R/W)
 	/// </summary>
 	public class SettingJson
 	{
@@ -32,7 +32,9 @@ namespace Kisaragi.Helper
 		/// <summary>
 		/// 音声ファイルデータの格納場所を公開するプロパティ
 		/// </summary>
-		public List<string> Settings => _voiceData;
+		public List<string> Voice => _voiceData;
+
+		public List<string> Account { get; set; }
 
 		#endregion
 
@@ -42,6 +44,31 @@ namespace Kisaragi.Helper
 		/// voiceSettings.json を生成します
 		/// </summary>
 		public async Task CreateVoiceSettingFileAsync()
+		{
+			// voiceData の規定パスを指定します。
+			var directory = new DirectoryInfo(_DefaultFilePath);
+
+			// voiceData の実ファイル名を列挙します。
+			var files = directory.GetFiles("*.mp3", SearchOption.AllDirectories);
+
+			// voice再生に必要なファイルパス(フルパス)を構築します。
+			_voiceData.AddRange(from f in files select _DefaultFilePath + f);
+
+			// シリアライズした結果を受け取ります。
+			var result = JsonConvert.SerializeObject(_voiceData, new JsonSerializerSettings
+			{
+				StringEscapeHandling = StringEscapeHandling.EscapeNonAscii
+			});
+
+			// Json ファイルに対して、シリアライズしたデータを書き込みます。
+			using (var writer = new StreamWriter("voiceSettings.json", false, Encoding.UTF8))
+				await writer.WriteAsync(result);
+		}
+
+		/// <summary>
+		/// TwitterSettings.json を生成します
+		/// </summary>
+		public async Task CreateTwitterSettingFileAsync()
 		{
 			// voiceData の規定パスを指定します。
 			var directory = new DirectoryInfo(_DefaultFilePath);

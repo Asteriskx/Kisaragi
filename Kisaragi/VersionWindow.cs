@@ -16,6 +16,7 @@ namespace Kisaragi
 		public VersionWindow()
 		{
 			InitializeComponent();
+
 			CloseButton.Click += (s, e) =>
 			{
 				this.Dispose();
@@ -38,10 +39,11 @@ namespace Kisaragi
 		/// </summary>
 		private void VersionWindow_Load(object sender, EventArgs e)
 		{
+			kisaragi.Image = Properties.Resources.logo;
 			gitIcon.Image = Properties.Resources.GitHub;
 			Twitter.Image = Properties.Resources.Twitter;
 		}
-
+		
 		#endregion
 	}
 }

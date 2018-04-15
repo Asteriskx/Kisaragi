@@ -15,9 +15,15 @@ namespace Kisaragi.Helper
 	{
 		#region Properties
 
+		/// <summary>
+		/// 音声ファイルのファイルパスを管理します。
+		/// </summary>
 		public string FilePath { get; private set; }
-		public string AliasName { get; private set; }
-		private static Random _Random { get; set; } = new Random();
+
+		/// <summary>
+		/// 音声ファイルのエイリアス名を管理します。
+		/// </summary>
+		public string AliasName { get; private set; } = "MediaFile";
 
 		#endregion
 
@@ -30,11 +36,8 @@ namespace Kisaragi.Helper
 
 		#region Constractor
 
-		private SoundHelpers(string filePath, string aliasName)
-		{
-			this.FilePath = filePath;
-			this.AliasName = aliasName;
-		}
+		public SoundHelpers() { }
+		private SoundHelpers(string filePath) => this.FilePath = filePath;
 
 		#endregion
 
@@ -49,7 +52,8 @@ namespace Kisaragi.Helper
 			var status = new StringBuilder(16);
 			var (action, state) = (0, string.Empty);
 
-			if (command == "play" || command == "status")
+			// 状態を監視したいものとそうでないものの 2 パターンに分類
+			if (command == "open \"" || command == "play" || command == "status")
 				(action, state) = (mciSendString($"{command} {aliasName}", status, status.Capacity, IntPtr.Zero), status.ToString());
 			else if (command == "stop" || command == "close")
 				(action, state) = (mciSendString($"{command} {aliasName}", null, 0, IntPtr.Zero), string.Empty);
@@ -69,10 +73,7 @@ namespace Kisaragi.Helper
 
 			try
 			{
-				// ファイルを開く
-				sound = Open(filePath);
-
-				// 再生する
+				sound = Open(filePath, AliasName);
 				sound.Play();
 
 				// 再生状態の監視
@@ -83,29 +84,21 @@ namespace Kisaragi.Helper
 
 				} while (sound.Status().state == "playing");
 
-				// 音声ファイル停止・そっ閉じ
 				await _StoppedVoiceAsync(sound);
 				return sound;
 			}
 			catch (FileNotFoundException ex)
 			{
 				sound?.Close();
-				MessageBox.Show($"mp3 再生エラーが発生しました。\r\n{ex.StackTrace}",
-								"mp3 再生エラー",
-								MessageBoxButtons.OK,
-								MessageBoxIcon.Error);
+				MessageBox.Show($"再生エラーが発生しました。\r\n{ex.StackTrace}", "再生エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return null;
-			}
-			finally
-			{
-				// NOP
 			}
 		}
 
 		/// <summary>
 		/// 非同期でボイスファイルを停止します。
 		/// </summary>
-		public async Task _StoppedVoiceAsync(SoundHelpers sound)
+		private async Task _StoppedVoiceAsync(SoundHelpers sound)
 		{
 			if (sound == null) return;
 			sound.Stop();
@@ -113,28 +106,50 @@ namespace Kisaragi.Helper
 			await Task.Delay(100);
 		}
 
-		public static SoundHelpers Open(string filePath)
+		/// <summary>
+		/// 音声ファイルをオープンします。
+		/// </summary>
+		/// <param name="filePath"></param>
+		/// <returns></returns>
+		public static SoundHelpers Open(string filePath, string aliasName)
 		{
-			var aliasName = $"{_Random.Next(0, 1000)}";
-
 			if (!File.Exists(filePath))
-				throw new FileNotFoundException($"file not found: {filePath}");
+				throw new FileNotFoundException($"ファイルが存在しません。: {filePath}");
 
-			var mci = _MciCommand("open", $"{filePath} type mpegvideo alias {aliasName}");
-			if (mci.action != -1 && mci.state != "error")
-				throw new ApplicationException($"failed to open sound file \"{filePath}\"");
+			var mci = _MciCommand("open \"", $"{filePath} \" type mpegvideo alias {aliasName}");
+			if (mci.action == -1 && mci.state == "error")
+				throw new ApplicationException($"ファイルオープンに失敗しました。\"{filePath}\"");
 
-			return new SoundHelpers(filePath, aliasName);
+			return new SoundHelpers(filePath);
 		}
 
+		/// <summary>
+		/// 音声ファイルの再生状態を監視し、Tuple にて返却します。
+		/// </summary>
+		/// <returns></returns>
 		public (int action, string state) Status()
 		{
 			return _MciCommand("status", $"{this.AliasName} mode");
 		}
 
+		/// <summary>
+		/// 音声ファイルの再生を行います。
+		/// </summary>
 		public void Play() => _MciCommand("play", this.AliasName);
+
+		/// <summary>
+		/// 音声ファイルの停止を行います。
+		/// </summary>
 		public void Stop() => _MciCommand("stop", this.AliasName);
+
+		/// <summary>
+		/// 音声ファイルをクローズします。
+		/// </summary>
 		public void Close() => _MciCommand("close", this.AliasName);
+
+		/// <summary>
+		/// 後処理を行います。
+		/// </summary>
 		public void Dispose() => this.Close();
 	}
 }

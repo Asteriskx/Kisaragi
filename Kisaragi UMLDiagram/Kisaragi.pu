@@ -4,7 +4,6 @@ class Kisaragi {
     - private TimerSignal _TimerSignal { get; set; } = new TimerSignal(1000);
     + public Helpers Helpers { get; set; } = new Helpers();
     - private SettingJson _Json { get; set; } = new SettingJson();
-    - private VersionWindow _Version { get; set; }
     - private bool _isSubscribed
 
     + public Kisaragi()
@@ -59,7 +58,6 @@ class KisaragiMessageBox {
 
 class VersionWindow {
     + public VersionWindow()
-    - private void VersionWindow_Load(object sender, EventArgs e)
 }
 
 interface IKisaragi {
@@ -77,6 +75,6 @@ TimerSignal ..> Kisaragi
 TimerSignal <.. Kisaragi
 TimerSignal <|-- IKisaragi
 Utils <|-- EventArgs
-VersionWindow <|-- Form
+
 
 @enduml
