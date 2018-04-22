@@ -109,9 +109,9 @@
 			this.UserID.ForeColor = System.Drawing.Color.White;
 			this.UserID.Location = new System.Drawing.Point(143, 39);
 			this.UserID.Name = "UserID";
-			this.UserID.Size = new System.Drawing.Size(67, 18);
+			this.UserID.Size = new System.Drawing.Size(119, 18);
 			this.UserID.TabIndex = 2;
-			this.UserID.Text = "@Astrisk_";
+			this.UserID.Text = "Author : @Astrisk_";
 			// 
 			// UserTweet
 			// 

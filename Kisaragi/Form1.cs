@@ -178,6 +178,9 @@ namespace Kisaragi
 				var oauth = new OAuthWindow();
 				if (oauth.ShowDialog() == DialogResult.OK)
 					await _Twitter.GetAccessTokenAsync(oauth.PinCode);
+
+				// 認証完了メッセージの投稿
+				await PostTwitterAsync("OAuth completed for Kisaragi.");
 			};
 
 			// バージョン情報(&V) 
@@ -186,7 +189,7 @@ namespace Kisaragi
 
 			// テスト投稿(&P)
 			testPost.Click += async (s, ee) =>
-				await PostTwitterAsync("にゃーん");
+				await PostTwitterAsync("Kisaragi 投稿テスト");
 
 			// テスト取得(&T)
 			GetTimeline.Click += (s, ee) =>
