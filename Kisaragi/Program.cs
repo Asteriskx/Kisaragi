@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Kisaragi
@@ -13,6 +14,11 @@ namespace Kisaragi
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
+
+			// スプラッシュウィンドウの生成
+			using (var splash = new SplashWindow())
+				splash.Showing();
+
 			Application.Run(new Kisaragi());
 		}
 	}
