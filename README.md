@@ -18,6 +18,11 @@ Kisaragi is TimeSignal Application for .NET
 - OAuth1.0a 及び 2.0 に対応するべく、全体的な アクセスAPI を構築中。
 　認証は Pass したが、 GET, POST の投稿で Failed している状況。
 
+2018-04-23 時点： 
+- Ver1.0 リリースに向けて最終調整中。  
+  Usage 等に関しても記載していきます。  
+  もうしばらくお待ちください。
+ 
 ## License for Kisaragi
 MIT License
 
