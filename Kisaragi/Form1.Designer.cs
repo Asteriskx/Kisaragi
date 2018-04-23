@@ -34,7 +34,6 @@
 			this.ContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.OAuth = new System.Windows.Forms.ToolStripMenuItem();
 			this.testPost = new System.Windows.Forms.ToolStripMenuItem();
-			this.GetTimeline = new System.Windows.Forms.ToolStripMenuItem();
 			this.VersionInfo = new System.Windows.Forms.ToolStripMenuItem();
 			this.ExitKisaragi = new System.Windows.Forms.ToolStripMenuItem();
 			this.ProfileIcon = new System.Windows.Forms.PictureBox();
@@ -55,12 +54,11 @@
 			this.ContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.OAuth,
             this.testPost,
-            this.GetTimeline,
             this.VersionInfo,
             this.ExitKisaragi});
 			this.ContextMenu.Name = "ContextMenu";
 			this.ContextMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-			this.ContextMenu.Size = new System.Drawing.Size(195, 114);
+			this.ContextMenu.Size = new System.Drawing.Size(195, 92);
 			// 
 			// OAuth
 			// 
@@ -73,12 +71,6 @@
 			this.testPost.Name = "testPost";
 			this.testPost.Size = new System.Drawing.Size(194, 22);
 			this.testPost.Text = "テスト投稿(&P)";
-			// 
-			// GetTimeline
-			// 
-			this.GetTimeline.Name = "GetTimeline";
-			this.GetTimeline.Size = new System.Drawing.Size(194, 22);
-			this.GetTimeline.Text = "Timeline 取得(&T)";
 			// 
 			// VersionInfo
 			// 
@@ -169,7 +161,6 @@
 		private System.Windows.Forms.ToolStripMenuItem VersionInfo;
 		private System.Windows.Forms.ToolStripMenuItem OAuth;
 		private System.Windows.Forms.ToolStripMenuItem testPost;
-		private System.Windows.Forms.ToolStripMenuItem GetTimeline;
 		private System.Windows.Forms.PictureBox ProfileIcon;
 		private System.Windows.Forms.Label UserID;
 		private System.Windows.Forms.RichTextBox UserTweet;
