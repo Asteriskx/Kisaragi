@@ -1,3 +1,4 @@
+[![](http://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 # Kisaragi
 Kisaragi is TimeSignal Application for .NET
 
