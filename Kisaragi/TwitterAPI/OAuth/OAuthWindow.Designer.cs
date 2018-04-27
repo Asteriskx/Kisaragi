@@ -41,30 +41,30 @@
 			this.label1.AutoSize = true;
 			this.label1.Location = new System.Drawing.Point(12, 9);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(275, 12);
+			this.label1.Size = new System.Drawing.Size(248, 12);
 			this.label1.TabIndex = 0;
-			this.label1.Text = "Kisaragi を利用する為に、PIN Code を設定してください。";
+			this.label1.Text = "Twitter 連携に必要な認証キーを設定してください。";
 			// 
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Font = new System.Drawing.Font("メイリオ", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-			this.label2.Location = new System.Drawing.Point(9, 31);
+			this.label2.Font = new System.Drawing.Font("メイリオ", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.label2.Location = new System.Drawing.Point(11, 35);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(64, 28);
+			this.label2.Size = new System.Drawing.Size(41, 18);
 			this.label2.TabIndex = 1;
 			this.label2.Text = "PIN：";
 			// 
 			// pinCode
 			// 
-			this.pinCode.Location = new System.Drawing.Point(67, 36);
+			this.pinCode.Location = new System.Drawing.Point(49, 35);
 			this.pinCode.Name = "pinCode";
-			this.pinCode.Size = new System.Drawing.Size(220, 19);
+			this.pinCode.Size = new System.Drawing.Size(211, 19);
 			this.pinCode.TabIndex = 2;
 			// 
 			// OKButton
 			// 
-			this.OKButton.Location = new System.Drawing.Point(131, 72);
+			this.OKButton.Location = new System.Drawing.Point(104, 62);
 			this.OKButton.Name = "OKButton";
 			this.OKButton.Size = new System.Drawing.Size(75, 23);
 			this.OKButton.TabIndex = 3;
@@ -73,7 +73,7 @@
 			// 
 			// CancelButton
 			// 
-			this.CancelButton.Location = new System.Drawing.Point(212, 72);
+			this.CancelButton.Location = new System.Drawing.Point(185, 62);
 			this.CancelButton.Name = "CancelButton";
 			this.CancelButton.Size = new System.Drawing.Size(75, 23);
 			this.CancelButton.TabIndex = 4;
@@ -84,7 +84,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(303, 107);
+			this.ClientSize = new System.Drawing.Size(273, 97);
 			this.Controls.Add(this.CancelButton);
 			this.Controls.Add(this.OKButton);
 			this.Controls.Add(this.pinCode);

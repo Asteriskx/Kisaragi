@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using System.Threading;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Kisaragi
@@ -11,36 +11,21 @@ namespace Kisaragi
 	{
 		#region Constractor
 
-		public SplashWindow()
+		public SplashWindow(int interval)
 		{
 			InitializeComponent();
-			this.Paint += new PaintEventHandler(GenerateWindow);
+
+			var timer = new Timer();
+			timer.Interval = interval;
+			timer.Tick += (s, e) => this.Close();
+			timer.Start();
+
+			this.Paint += new PaintEventHandler((s, e) =>
+				ControlPaint.DrawBorder3D(e.Graphics, new Rectangle(0, 0, this.Width, this.Height), Border3DStyle.Raised));
+
+			this.Shown += (s, e) => this.Refresh();
 		}
 
 		#endregion
-
-		#region Method's
-
-		/// <summary>
-		/// ウィンドウの生成を行います。
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void GenerateWindow(object sender, PaintEventArgs e) =>
-			ControlPaint.DrawBorder3D(e.Graphics, new Rectangle(0, 0, this.Width, this.Height), Border3DStyle.Raised);
-
-		/// <summary>
-		/// 生成したウィンドウの表示を行います。
-		/// </summary>
-		public void Showing()
-		{
-			this.Show();
-			this.Refresh();
-			Thread.Sleep(3000);
-			this.Close();
-		}
-
-		#endregion
-
 	}
 }

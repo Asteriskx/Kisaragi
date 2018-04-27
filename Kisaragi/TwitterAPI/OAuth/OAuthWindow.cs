@@ -15,7 +15,7 @@ namespace Kisaragi.TwitterAPI.OAuth
 
 			OKButton.Click += (s, v) =>
 			{
-				PinCode = pinCode.Text;
+				this.PinCode = pinCode.Text;
 				DialogResult = DialogResult.OK;
 
 				this.Dispose();
