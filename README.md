@@ -15,7 +15,7 @@ Kisaragi is TimeSignal Application for .NET
 - タスクトレイ常駐：設定、画面サイズ変更、バージョン情報、終了はここから行います。
 
 ## 使い方
-- Kisaragi を [v1.0.0](https://github.com/Asteriskx/Kisaragi/releases/tag/v1.0.0 "v.1.0.0") より、DL します。  
+- Kisaragi を [v1.1.0](https://github.com/Asteriskx/Kisaragi/releases/tag/v1.1.0 "v.1.1.0") より、DL します。  
   もしくは、`Download ZIP`より　`Clone` します。  
   個人の環境に合わせて `Clone` する場所は決めてください。  
   
@@ -91,8 +91,9 @@ Usage 等に関しても記載していきます。~~
 ~~- 使用方法を記載中。~~
 - v.1.0.0 リリース。
 - 画面サイズを`Normal`, `Minimum` の 2パターンに変更できるように対応。
-- チェックボックスの値を保持できるように修正。
- 
+- チェックボックスの値を保持できるように修正。  
+- v.1.1.0 リリース。  
+
 ## License for Kisaragi
 MIT License
 
