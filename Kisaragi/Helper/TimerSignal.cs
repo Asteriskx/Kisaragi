@@ -93,9 +93,9 @@ namespace Kisaragi.Helper
 
 						// Main UI に残り時間を表示させる
 						this._Msg.Invoke((Action)(() =>
-					{
-						this._Msg.Text = $"{elapsedTime} 時をお知らせします！('ω')";
-					}));
+						{
+							this._Msg.Text = $"{elapsedTime} 時をお知らせします！('ω')";
+						}));
 
 						// ♰イベント発火♰
 						this.MonitoringTimeChanged?.Invoke(null, new Utils<int>(elapsedTime));

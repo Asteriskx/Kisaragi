@@ -106,131 +106,7 @@ namespace Kisaragi
 
 		#region Constractor
 
-		public Kisaragi()
-		{
-			InitializeComponent();
-
-			this._OnTimeSignal = new TimerSignal(1000, this.MultiMsg);
-			this._AlarmSignal = new TimerSignal(1000, this, this.MultiMsg);
-
-			// 任意の通知時間設定
-			checkBoxNotifyTime.Click += (s, e) =>
-			{
-				if (checkBoxNotifyTime.Checked)
-					this._AlarmSignal.AlarmStateChanged += _IsAlarmStateChanged;
-				else
-					this._AlarmSignal.AlarmStateChanged -= _IsAlarmStateChanged;
-
-				this._AlarmSignal.InvokingAlarmEventIgnition(checkBoxNotifyTime.Checked);
-			};
-
-			// Twitter 連携要否
-			checkBoxPostTwitter.Click += async (s, e) =>
-			{
-				if (checkBoxPostTwitter.Checked)
-				{
-					var settings = Properties.Settings.Default;
-					var consumerKey = (string)settings["ConsumerKey"];
-					var consumerSecret = (string)settings["ConsumerSecret"];
-					var accessToken = (string)settings["AccessToken"];
-					var accessTokenSecret = (string)settings["AccessTokenSecret"];
-
-					if (string.IsNullOrEmpty(consumerKey) || string.IsNullOrEmpty(consumerSecret) ||
-						string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(accessTokenSecret))
-					{
-						// Consumer Key / Secret をここで入力
-						var key = new KeyWindow(consumerKey, consumerSecret);
-						if (key.ShowDialog() == DialogResult.OK)
-							(this._ConsumerKey, this._ConsumerSecret) = key.CkPair;
-
-						// 入力された Consumer Key / Secret を元に インスタンス生成
-						this._Twitter = new Twitter(_ConsumerKey, _ConsumerSecret, this._HttpClient);
-
-						if (this._ConsumerKey != null && _ConsumerSecret != null)
-						{
-							// 認証を実施します
-							await _Twitter.AuthorizeAsync();
-
-							// Form が Close したと同時に ShowDialog も完了する。
-							var oauth = new OAuthWindow();
-							if (oauth.ShowDialog() == DialogResult.OK)
-								await _Twitter.GetAccessTokenAsync(oauth.PinCode);
-
-							// 認証完了メッセージの投稿
-							await PostTwitterAsync($"OAuth completed for Kisaragi.\r\n{DateTimeOffset.Now}");
-
-							// 各種認証キーを設定ファイルに保存する
-							settings["ConsumerKey"] = _Twitter.ConsumerKey;
-							settings["ConsumerSecret"] = _Twitter.ConsumerKeySecret;
-							settings["AccessToken"] = _Twitter.AccessToken;
-							settings["AccessTokenSecret"] = _Twitter.AccessTokenSecret;
-							settings.Save();
-						}
-						else
-						{
-							checkBoxPostTwitter.Checked = false;
-							MessageBox.Show("Twitter 連携をキャンセルします。\r\n" +
-								"再度認証するには、チェックボックスをクリックしてください。", "認証未実施", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						}
-					}
-					else
-						new KisaragiMessageBox("Twitter 連携用認証キーは既に存在しています。" +
-							"\r\nTwitter 連携を行うにはチェックを入れたままにしてください。", "通知", 2000);
-				}
-			};
-
-			// 音声ファイル使用要否
-			checkBoxNotifyVoice.Click += async (s, e) =>
-			{
-				if (checkBoxNotifyVoice.Checked)
-				{
-					var path = Properties.Settings.Default;
-
-					// 音声設定ファイルがない場合
-					if (!File.Exists(_SaveFileName))
-					{
-						var settings = new SettingsWindow();
-
-						if (settings.ShowDialog() == DialogResult.OK)
-							this.NotifyTime = settings.NotifyTime;
-
-						path["VoicePath"] = path.VoicePath;
-						path.Save();
-
-						this._Json = new NotifyVoiceSettingJsonObject(_SaveFileName, settings.VoicePath);
-
-						if (!_IsSubscribed)
-						{
-							try
-							{
-								await _Json.SaveFileAsync();
-								await _Json.LoadFileAsync();
-								_OnTimeSignal.InvokingTimerSignalEventIgnition();
-							}
-							catch (IOException io)
-							{
-								WriteLine($"Exception = {io.Message}");
-							}
-
-							_IsSubscribed = true;
-						}
-					}
-					else
-					{
-						if (!_IsSubscribed)
-						{
-							new KisaragiMessageBox("音声ありモードにて、Kisaragi は動作します。\r\n" +
-								"※音声ファイル有無に関しては、設定にて変更できます。", "Kisaragi 設定モード : 音声あり", 1500);
-
-							this._Json = new NotifyVoiceSettingJsonObject(_SaveFileName, path.VoicePath);
-							await _Json.LoadFileAsync();
-							_OnTimeSignal.InvokingTimerSignalEventIgnition();
-						}
-						_IsSubscribed = true;
-					}
-				}
-			};
-		}
+		public Kisaragi() => InitializeComponent();
 
 		#endregion
 
@@ -241,10 +117,17 @@ namespace Kisaragi
 		/// </summary>
 		private void Form1_Load(object sender, EventArgs e)
 		{
+			// インスタンス設定
+			this._OnTimeSignal = new TimerSignal(1000, this.MultiMsg);
+			this._AlarmSignal = new TimerSignal(1000, this, this.MultiMsg);
+
 			// 各種イベントハンドラ登録
 			this._OnTimeSignal.MonitoringTimeChanged += _IsMonitoringTimeChanged;
-			this.MouseDown += KisaragiFormMouseDown;
-			this.MouseMove += KisaragiFormMouseMove;
+			this.checkBoxNotifyTime.Click += _IsCheckBoxNotifyTimeChanged;
+			this.checkBoxPostTwitter.Click += _IsCheckBoxPostTwitterChanged;
+			this.checkBoxNotifyVoice.Click += _IsCheckBoxNotifyVoiceChanged;
+			this.MouseDown += _KisaragiFormMouseDown;
+			this.MouseMove += _KisaragiFormMouseMove;
 
 			// 各種メソッドコール
 			_WelcomeKisaragi();
@@ -263,15 +146,198 @@ namespace Kisaragi
 		}
 
 		/// <summary>
+		/// Kisaragi が終了される時に実行されるメソッド
+		/// </summary>
+		private void Form1_FormClosing(object sender, EventArgs e)
+		{
+			var settings = Properties.Settings.Default;
+
+			// 各種チェックボックスの値を保存
+			settings["AlarmCheck"] = checkBoxNotifyTime.Checked;
+			settings["PostTwitterCheck"] = checkBoxPostTwitter.Checked;
+			settings["VoiceCheck"] = checkBoxNotifyVoice.Checked;
+			settings.Save();
+
+			_IsSubscribed = false;
+		}
+
+		/// <summary>
+		/// アラーム機能：チェックボックスクリックイベント発生時
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void _IsCheckBoxNotifyTimeChanged(object sender, EventArgs e) => UsingNotifyAlarm();
+
+		/// <summary>
+		/// Twitter 連携機能：チェックボックスクリックイベント発生時
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private async void _IsCheckBoxPostTwitterChanged(object sender, EventArgs e) => await UsingPostTwitterAsync();
+
+		/// <summary>
+		/// ボイス機能：チェックボックスクリックイベント発生時
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private async void _IsCheckBoxNotifyVoiceChanged(object sender, EventArgs e) => await UsingNotifyVoiceAsync();
+
+		/// <summary>
+		/// アラーム機能のイベント設定を行います。
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void UsingNotifyAlarm()
+		{
+			if (checkBoxNotifyTime.Checked)
+				this._AlarmSignal.AlarmStateChanged += _IsAlarmStateChanged;
+			else
+				this._AlarmSignal.AlarmStateChanged -= _IsAlarmStateChanged;
+
+			this._AlarmSignal.InvokingAlarmEventIgnition(checkBoxNotifyTime.Checked);
+		}
+
+		/// <summary>
+		/// Twitter 連携に関するイベント設定を行います。
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private async Task UsingPostTwitterAsync()
+		{
+			if (checkBoxPostTwitter.Checked)
+			{
+				var settings = Properties.Settings.Default;
+				var consumerKey = (string)settings["ConsumerKey"];
+				var consumerSecret = (string)settings["ConsumerSecret"];
+				var accessToken = (string)settings["AccessToken"];
+				var accessTokenSecret = (string)settings["AccessTokenSecret"];
+
+				if (string.IsNullOrEmpty(consumerKey) || string.IsNullOrEmpty(consumerSecret) ||
+					string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(accessTokenSecret))
+				{
+					// Consumer Key / Secret をここで入力
+					var key = new KeyWindow(consumerKey, consumerSecret);
+					if (key.ShowDialog() == DialogResult.OK)
+						(this._ConsumerKey, this._ConsumerSecret) = key.CkPair;
+
+					// 入力された Consumer Key / Secret を元に インスタンス生成
+					this._Twitter = new Twitter(_ConsumerKey, _ConsumerSecret, this._HttpClient);
+
+					if (this._ConsumerKey != null && _ConsumerSecret != null)
+					{
+						// 認証を実施します
+						await _Twitter.AuthorizeAsync();
+
+						// Form が Close したと同時に ShowDialog も完了する。
+						var oauth = new OAuthWindow();
+						if (oauth.ShowDialog() == DialogResult.OK)
+							await _Twitter.GetAccessTokenAsync(oauth.PinCode);
+
+						// 認証完了メッセージの投稿
+						await PostTwitterAsync($"OAuth completed for Kisaragi.\r\n{DateTimeOffset.Now}");
+
+						// 各種認証キーを設定ファイルに保存する
+						settings["ConsumerKey"] = _Twitter.ConsumerKey;
+						settings["ConsumerSecret"] = _Twitter.ConsumerKeySecret;
+						settings["AccessToken"] = _Twitter.AccessToken;
+						settings["AccessTokenSecret"] = _Twitter.AccessTokenSecret;
+						settings.Save();
+					}
+					else
+					{
+						checkBoxPostTwitter.Checked = false;
+						MessageBox.Show("Twitter 連携をキャンセルします。\r\n" +
+							"再度認証するには、チェックボックスをクリックしてください。", "認証未実施", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					}
+				}
+				else
+					new KisaragiMessageBox("Twitter 連携用認証キーは既に存在しています。" +
+						"\r\nTwitter 連携を行うにはチェックを入れたままにしてください。", "通知", 2000);
+			}
+		}
+
+		/// <summary>
+		/// ボイス利用に関するイベント設定を行います。
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private async Task UsingNotifyVoiceAsync()
+		{
+			if (checkBoxNotifyVoice.Checked)
+			{
+				var path = Properties.Settings.Default;
+
+				// 音声設定ファイルがない場合
+				if (!File.Exists(_SaveFileName))
+				{
+					var settings = new SettingsWindow();
+
+					if (settings.ShowDialog() == DialogResult.OK)
+						this.NotifyTime = settings.NotifyTime;
+
+					path["VoicePath"] = path.VoicePath;
+					path.Save();
+
+					this._Json = new NotifyVoiceSettingJsonObject(_SaveFileName, settings.VoicePath);
+
+					if (!_IsSubscribed)
+					{
+						try
+						{
+							await _Json.SaveFileAsync();
+							await _Json.LoadFileAsync();
+							_OnTimeSignal.InvokingTimerSignalEventIgnition();
+						}
+						catch (IOException io)
+						{
+							WriteLine($"Exception = {io.Message}");
+						}
+
+						_IsSubscribed = true;
+					}
+				}
+				else
+				{
+					if (!_IsSubscribed)
+					{
+						new KisaragiMessageBox("音声ありモードにて、Kisaragi は動作します。\r\n" +
+							"※音声ファイル有無に関しては、設定にて変更できます。", "Kisaragi 設定モード : 音声あり", 1500);
+
+						this._Json = new NotifyVoiceSettingJsonObject(_SaveFileName, path.VoicePath);
+						await _Json.LoadFileAsync();
+						_OnTimeSignal.InvokingTimerSignalEventIgnition();
+					}
+					_IsSubscribed = true;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Kisaragi を起動した後に出るフォームにておもてなしを行います。
 		/// </summary>
 		/// <returns></returns>
-		private void _WelcomeKisaragi()
+		private async Task _WelcomeKisaragi()
 		{
 			new KisaragiMessageBox("音声なしモードにて、Kisaragi は動作します。\r\n" +
 				"※音声ファイル有無に関しては、設定にて変更できます。", "Kisaragi 設定モード : 音声なし", 1500);
 
 			UserName.Text = Environment.UserName;
+
+			var settings = Properties.Settings.Default;
+
+			// 各種チェックボックスの値を復元
+			checkBoxNotifyTime.Checked = (bool)settings["AlarmCheck"];
+			checkBoxPostTwitter.Checked = (bool)settings["PostTwitterCheck"];
+			checkBoxNotifyVoice.Checked = (bool)settings["VoiceCheck"];
+
+			// アラーム機能 : 前回値チェックあり
+			if (checkBoxNotifyTime.Checked) UsingNotifyAlarm();
+
+			// Twitter 連携機能：前回値チェックあり
+			if (checkBoxPostTwitter.Checked) await UsingPostTwitterAsync();
+
+			// ボイス機能：前回値チェックあり
+			if (checkBoxNotifyVoice.Checked) await UsingNotifyVoiceAsync();
 		}
 
 		/// <summary>
@@ -309,6 +375,12 @@ namespace Kisaragi
 					this.NotifyTime = settings.NotifyTime;
 			};
 
+			// Kisaragi フォーム画面サイズ：Defaultモード
+			MonitorDefault.Click += (s, e) => this.WindowState = FormWindowState.Normal;
+
+			// Kisaragi フォーム画面サイズ：Minimumモード
+			MonitorMinimum.Click += (s, e) => this.WindowState = FormWindowState.Minimized;
+
 			// バージョン情報(&V) 
 			VersionInfo.Click += (s, e) => new VersionWindow().Show();
 
@@ -324,16 +396,11 @@ namespace Kisaragi
 		}
 
 		/// <summary>
-		/// Kisaragi が終了される時に実行されるメソッド
-		/// </summary>
-		private void Form1_FormClosing(object sender, EventArgs e) => _IsSubscribed = false;
-
-		/// <summary>
 		/// MouseDown イベントハンドラ
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void KisaragiFormMouseDown(object sender, MouseEventArgs e)
+		private void _KisaragiFormMouseDown(object sender, MouseEventArgs e)
 		{
 			if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
 				_Position = new Point(e.X, e.Y);
@@ -344,7 +411,7 @@ namespace Kisaragi
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void KisaragiFormMouseMove(object sender, MouseEventArgs e)
+		private void _KisaragiFormMouseMove(object sender, MouseEventArgs e)
 		{
 			if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
 				this.Location = new Point(this.Location.X + e.X - _Position.X, this.Location.Y + e.Y - _Position.Y);

@@ -33,6 +33,9 @@
 			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.ContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.Settings = new System.Windows.Forms.ToolStripMenuItem();
+			this.MonitorSize = new System.Windows.Forms.ToolStripMenuItem();
+			this.MonitorDefault = new System.Windows.Forms.ToolStripMenuItem();
+			this.MonitorMinimum = new System.Windows.Forms.ToolStripMenuItem();
 			this.VersionInfo = new System.Windows.Forms.ToolStripMenuItem();
 			this.ExitKisaragi = new System.Windows.Forms.ToolStripMenuItem();
 			this.ProfileIcon = new System.Windows.Forms.PictureBox();
@@ -55,18 +58,40 @@
 			// ContextMenu
 			// 
 			this.ContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.Settings,
-			this.VersionInfo,
-			this.ExitKisaragi});
+            this.Settings,
+            this.MonitorSize,
+            this.VersionInfo,
+            this.ExitKisaragi});
 			this.ContextMenu.Name = "ContextMenu";
 			this.ContextMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-			this.ContextMenu.Size = new System.Drawing.Size(167, 70);
+			this.ContextMenu.Size = new System.Drawing.Size(167, 114);
 			// 
 			// Settings
 			// 
 			this.Settings.Name = "Settings";
 			this.Settings.Size = new System.Drawing.Size(166, 22);
 			this.Settings.Text = "Settings(&S)";
+			// 
+			// MonitorSize
+			// 
+			this.MonitorSize.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MonitorDefault,
+            this.MonitorMinimum});
+			this.MonitorSize.Name = "MonitorSize";
+			this.MonitorSize.Size = new System.Drawing.Size(166, 22);
+			this.MonitorSize.Text = "画面(&M)";
+			// 
+			// MonitorDefault
+			// 
+			this.MonitorDefault.Name = "MonitorDefault";
+			this.MonitorDefault.Size = new System.Drawing.Size(152, 22);
+			this.MonitorDefault.Text = "通常(&D)";
+			// 
+			// MonitorMinimum
+			// 
+			this.MonitorMinimum.Name = "MonitorMinimum";
+			this.MonitorMinimum.Size = new System.Drawing.Size(152, 22);
+			this.MonitorMinimum.Text = "最小化(&M)";
 			// 
 			// VersionInfo
 			// 
@@ -214,5 +239,8 @@
 		private System.Windows.Forms.CheckBox checkBoxPostTwitter;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.CheckBox checkBoxNotifyVoice;
+		private System.Windows.Forms.ToolStripMenuItem MonitorSize;
+		private System.Windows.Forms.ToolStripMenuItem MonitorDefault;
+		private System.Windows.Forms.ToolStripMenuItem MonitorMinimum;
 	}
 }

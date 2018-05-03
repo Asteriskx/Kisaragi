@@ -82,5 +82,41 @@ namespace Kisaragi.Properties {
                 this["VoicePath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AlarmCheck {
+            get {
+                return ((bool)(this["AlarmCheck"]));
+            }
+            set {
+                this["AlarmCheck"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PostTwitterCheck {
+            get {
+                return ((bool)(this["PostTwitterCheck"]));
+            }
+            set {
+                this["PostTwitterCheck"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool VoiceCheck {
+            get {
+                return ((bool)(this["VoiceCheck"]));
+            }
+            set {
+                this["VoiceCheck"] = value;
+            }
+        }
     }
 }
