@@ -2,8 +2,7 @@
 # Kisaragi
 Kisaragi is TimeSignal Application for .NET
 
-![KisaragiInfo](KisaragiInfo.png)
-![form](form.png)
+![logo](logo.png)
 
 ## Kisaragi is 何？
 作業に没頭する人向けの、時間お知らせサポートアプリですっっ('ω')  
@@ -13,6 +12,48 @@ Kisaragi is TimeSignal Application for .NET
 - アラーム機能 (任意の時間にて設定できます。設定単位：分)
 - Twitter 連携機能 (ライブラリ：自作, 通知メッセージを投稿)
 - 音声ファイルを使用することにより、通知をより分かりやすくできます。
+- タスクトレイ常駐(設定、バージョン情報、終了はここから行います。)
+
+## 使い方
+- Kisaragi を`Download ZIP`より、`Clone` します。  
+  個人の環境に合わせて 'Clone' する場所は決めてください。  
+  
+- `Clone` した Kisaragi を解凍し、`Kisaragi.sln` を開いてください。  
+  Kisaragi の動作環境は `.NET Framework 4.7.1` が動作する環境が必須となります。  
+  `Visual Studio 2017` をインストールすることで解決すると思います。 
+
+#### メイン画面  
+
+![form](form.png)
+
+- [x] Custom NotifyTime  
+  アラーム機能有効時、通知発生までの時間を設定します。  
+  `タスクトレイ：Settings` より、時間の設定が可能です。  
+  
+- [x] Post with Twitter  
+  `Twitter` と連携する際に使用します。  
+  連携設定に関しては、以下設定画面を参照してください。
+  
+- [x] Using NotifyVoice  
+  通知をボイス付きで行いたい時に使用します。  
+  現状の音声ファイルの種類は `26` 種類あります。  
+  拡張子は `.mp3` を使用します。  
+  
+##### 音声ファイルは、各個人にて用意してください。 
+  
+  | file name | content |  
+  | ---- | ---- |  
+  | 0 ～ 23 | 0時～24時の時報に対応する音声ファイル。|  
+  | 24 | Kisaragi が終了する際の音声ファイル。 |  
+  | 25 | アラーム機能にて使用する音声ファイル。 |  
+  
+#### Consumer Key / Secret の設定画面  
+
+![settings-Step1](settings-Step1.png)
+
+#### Twitter アプリ連携にて取得した PIN Code の設定画面  
+
+![settings-Step2](settings-Step2.png)
 
 ## History
 2018-03-13 時点：  
