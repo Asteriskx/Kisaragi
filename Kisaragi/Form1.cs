@@ -194,7 +194,7 @@ namespace Kisaragi
 						if (settings.ShowDialog() == DialogResult.OK)
 							this.NotifyTime = settings.NotifyTime;
 
-						path["VoicePath"] = this.NotifyTime;
+						path["VoicePath"] = path.VoicePath;
 						path.Save();
 
 						this._Json = new NotifyVoiceSettingJsonObject(_SaveFileName, settings.VoicePath);
