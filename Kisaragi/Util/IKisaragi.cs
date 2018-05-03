@@ -9,8 +9,12 @@ namespace Kisaragi.Util
 	{
 		/// <summary>
 		/// 時間が経過し、変化したタイミングを監視するイベントハンドラ
-		/// 現状は、1時間
 		/// </summary>
 		event EventHandler<Utils<int>> MonitoringTimeChanged;
+
+		/// <summary>
+		/// アラーム機能を監視するイベントハンドラ
+		/// </summary>
+		event EventHandler<Utils<int>> AlarmStateChanged;
 	}
 }

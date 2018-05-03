@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace Kisaragi
@@ -17,6 +16,15 @@ namespace Kisaragi
 		{
 			InitializeComponent();
 
+			// バージョン情報が押下された際、最初に動作します。
+			this.Load += (s, e) =>
+			{
+				kisaragi.Image = Properties.Resources.logo;
+				gitIcon.Image = Properties.Resources.GitHub;
+				Twitter.Image = Properties.Resources.Twitter;
+			};
+
+			// キャンセルボタン押下
 			CloseButton.Click += (s, e) =>
 			{
 				this.Dispose();
@@ -32,18 +40,5 @@ namespace Kisaragi
 
 		#endregion
 
-		#region first running method.
-
-		/// <summary>
-		/// バージョン情報が押下された際、最初に動作します。
-		/// </summary>
-		private void VersionWindow_Load(object sender, EventArgs e)
-		{
-			kisaragi.Image = Properties.Resources.logo;
-			gitIcon.Image = Properties.Resources.GitHub;
-			Twitter.Image = Properties.Resources.Twitter;
-		}
-		
-		#endregion
 	}
 }

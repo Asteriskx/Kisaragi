@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.Http.Headers;
 
 namespace Kisaragi.TwitterAPI.OAuth
 {
@@ -16,29 +16,44 @@ namespace Kisaragi.TwitterAPI.OAuth
 	/// </summary>
 	public class AuthKisaragi
 	{
-		protected const string REQUEST_TOKEN_URL = "https://api.twitter.com/oauth/request_token";
-		protected const string ACCESS_TOKEN_URL = "https://api.twitter.com/oauth/access_token";
-		protected const string AUTHORIZE_URL = "https://api.twitter.com/oauth/authorize";
+
+		#region Constant Variable
+
+		private const string REQUEST_TOKEN_URL = "https://api.twitter.com/oauth/request_token";
+		private const string ACCESS_TOKEN_URL = "https://api.twitter.com/oauth/access_token";
+		private const string AUTHORIZE_URL = "https://api.twitter.com/oauth/authorize";
+
+		#endregion
+
+		#region Properties
 
 		/// <summary>
 		///  HttpClient インスタンス の管理を行います。
 		/// </summary>
-		public HttpClient Http { get; set; }
+		private HttpClient _Http { get; set; }
 
 		/// <summary>
 		/// トークン生成時の乱数 インスタンス
 		/// </summary>
-		public Random Rand { get; set; } = new Random();
+		private Random _Rand { get; set; } = new Random();
+
+		#endregion
+
+		#region Constractor 
 
 		/// <summary>
-		/// 
+		/// AuthKisaragi Constractor
 		/// </summary>
 		/// <param name="httpClient"></param>
 		public AuthKisaragi(HttpClient httpClient)
 		{
 			ServicePointManager.Expect100Continue = false;
-			Http = httpClient;
+			_Http = httpClient;
 		}
+
+		#endregion
+
+		#region OAuth Authorize Method's.
 
 		/// <summary>
 		/// リクエストトークンの取得を行います。
@@ -170,7 +185,7 @@ namespace Kisaragi.TwitterAPI.OAuth
 					}
 
 					request.Headers.ExpectContinue = false;
-					response = await Http.SendAsync(request);
+					response = await _Http.SendAsync(request);
 
 					if (response.StatusCode != HttpStatusCode.OK)
 						throw new HttpRequestException($"HTTP 通信エラーが発生しました。" +
@@ -266,7 +281,7 @@ namespace Kisaragi.TwitterAPI.OAuth
 		private string _GenerateNonce(int len)
 		{
 			string str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-			return str.Aggregate(new StringBuilder(len), (sb, s) => sb.Append(str[Rand.Next(str.Length)])).ToString();
+			return str.Aggregate(new StringBuilder(len), (sb, s) => sb.Append(str[_Rand.Next(str.Length)])).ToString();
 		}
 
 		/// <summary>
@@ -285,5 +300,8 @@ namespace Kisaragi.TwitterAPI.OAuth
 
 			return result.ToString();
 		}
+
+		#endregion
+
 	}
 }

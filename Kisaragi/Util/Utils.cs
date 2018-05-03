@@ -8,7 +8,7 @@ namespace Kisaragi.Util
 	/// <typeparam name="T"></typeparam>
 	public class Utils<T> : EventArgs
 	{
-		public Utils(T args) => Args = args;
 		public T Args { get; private set; }
+		public Utils(T args) => Args = args;
 	}
 }

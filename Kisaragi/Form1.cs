@@ -1,16 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Net;
-using System.Drawing;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Net.Http;
-using System.Collections.Generic;
 
-using Kisaragi.Util;
 using Kisaragi.Helper;
 using Kisaragi.TwitterAPI;
 using Kisaragi.TwitterAPI.OAuth;
+using Kisaragi.Util;
 
 using static System.Console;
 
@@ -22,18 +22,29 @@ namespace Kisaragi
 	public partial class Kisaragi : Form
 	{
 
+		#region Constants Variable
+
+		/// <summary>
+		/// Kisaragi 時報通知パターン
+		/// 0 : 1時間毎
+		/// 1 : 任意の時間
+		/// 2 : その他
+		/// </summary>
+		private enum _EventState { OnTime, Alarm, Others }
+
+		/// <summary>
+		/// 音声ファイルの規定場所:保存ファイル名
+		/// </summary>
+		private const string _SaveFileName = "voiceSettings.json";
+
+		#endregion
+
 		#region Field Valiable
 
 		/// <summary>
 		/// イベントが購読される準備が完了したか
 		/// </summary>
 		private bool _IsSubscribed = false;
-
-		/// <summary>
-		/// Consumer Key / Consumer Key Secret.
-		/// </summary>
-		private const string _ConsumerKey = "your consumer key.";
-		private const string _ConsumerKeySecret = "your consumer key secret.";
 
 		/// <summary>
 		/// マウスのクリック位置
@@ -45,20 +56,31 @@ namespace Kisaragi
 		#region Properties
 
 		/// <summary>
-		/// Kisaragi 時報管理クラス インスタンス
-		/// 監視間隔時間は、1 sec.
+		/// HttpClient の管理を行います。
 		/// </summary>
-		private TimerSignal _TimerSignal { get; set; } = new TimerSignal(1000);
-
-		/// <summary>
-		/// Kisaragi 時報システムのヘルパクラス インスタンス
-		/// </summary>
-		public SoundHelpers SoundHelpers { get; set; } = new SoundHelpers();
+		private HttpClient _HttpClient { get; set; } = new HttpClient(new HttpClientHandler());
 
 		/// <summary>
 		/// 音声ファイル再生に関しての情報を管理するクラス(Jsonファイル R/W) インスタンス
 		/// </summary>
-		private SettingJson _Json { get; set; } = new SettingJson();
+		private NotifyVoiceSettingJsonObject _Json { get; set; }
+
+		/// <summary>
+		/// Kisaragi 時報システムのヘルパクラス インスタンス
+		/// </summary>
+		private SoundHelpers _SoundHelpers { get; set; } = new SoundHelpers();
+
+		/// <summary>
+		/// Kisaragi 時報管理クラス 定刻通知用インスタンス
+		/// </summary>
+		private TimerSignal _OnTimeSignal { get; set; }
+		private TimerSignal _AlarmSignal { get; set; }
+
+		/// <summary>
+		/// 任意の通知時間を設定します。
+		/// 初期値：1 min
+		/// </summary>
+		public TimeSpan NotifyTime { get; set; } = new TimeSpan(0, 1, 0);
 
 		/// <summary>
 		/// Twitter へ アクセスするための ラッパークラス インスタンス
@@ -66,14 +88,19 @@ namespace Kisaragi
 		private Twitter _Twitter { get; set; }
 
 		/// <summary>
-		/// HttpClientHandler の管理を行います。
+		/// Kisaragi 時報通知パターン イベント管理
 		/// </summary>
-		private HttpClientHandler _ClientHandler = new HttpClientHandler();
+		private _EventState _State { get; set; }
 
 		/// <summary>
-		/// HttpClient の管理を行います。
+		/// Consumer Key を管理します。
 		/// </summary>
-		public HttpClient HttpClient { get; protected set; }
+		private string _ConsumerKey { get; set; }
+
+		/// <summary>
+		/// Consumer Key Secret を管理します。
+		/// </summary>
+		private string _ConsumerSecret { get; set; }
 
 		#endregion
 
@@ -83,10 +110,126 @@ namespace Kisaragi
 		{
 			InitializeComponent();
 
-			HttpClient = new HttpClient(_ClientHandler);
-			_Twitter = new Twitter(_ConsumerKey, _ConsumerKeySecret, HttpClient);
+			this._OnTimeSignal = new TimerSignal(1000, this.MultiMsg);
+			this._AlarmSignal = new TimerSignal(1000, this, this.MultiMsg);
 
-			_TimerSignal.MonitoringTimeChanged += _IsMonitoringTimeChanged;
+			// 任意の通知時間設定
+			checkBoxNotifyTime.Click += (s, e) =>
+			{
+				if (checkBoxNotifyTime.Checked)
+					this._AlarmSignal.AlarmStateChanged += _IsAlarmStateChanged;
+				else
+					this._AlarmSignal.AlarmStateChanged -= _IsAlarmStateChanged;
+
+				this._AlarmSignal.InvokingAlarmEventIgnition(checkBoxNotifyTime.Checked);
+			};
+
+			// Twitter 連携要否
+			checkBoxPostTwitter.Click += async (s, e) =>
+			{
+				if (checkBoxPostTwitter.Checked)
+				{
+					var settings = Properties.Settings.Default;
+					var consumerKey = (string)settings["ConsumerKey"];
+					var consumerSecret = (string)settings["ConsumerSecret"];
+					var accessToken = (string)settings["AccessToken"];
+					var accessTokenSecret = (string)settings["AccessTokenSecret"];
+
+					if (string.IsNullOrEmpty(consumerKey) || string.IsNullOrEmpty(consumerSecret) ||
+						string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(accessTokenSecret))
+					{
+						// Consumer Key / Secret をここで入力
+						var key = new KeyWindow(consumerKey, consumerSecret);
+						if (key.ShowDialog() == DialogResult.OK)
+							(this._ConsumerKey, this._ConsumerSecret) = key.CkPair;
+
+						// 入力された Consumer Key / Secret を元に インスタンス生成
+						this._Twitter = new Twitter(_ConsumerKey, _ConsumerSecret, this._HttpClient);
+
+						if (this._ConsumerKey != null && _ConsumerSecret != null)
+						{
+							// 認証を実施します
+							await _Twitter.AuthorizeAsync();
+
+							// Form が Close したと同時に ShowDialog も完了する。
+							var oauth = new OAuthWindow();
+							if (oauth.ShowDialog() == DialogResult.OK)
+								await _Twitter.GetAccessTokenAsync(oauth.PinCode);
+
+							// 認証完了メッセージの投稿
+							await PostTwitterAsync($"OAuth completed for Kisaragi.\r\n{DateTimeOffset.Now}");
+
+							// 各種認証キーを設定ファイルに保存する
+							settings["ConsumerKey"] = _Twitter.ConsumerKey;
+							settings["ConsumerSecret"] = _Twitter.ConsumerKeySecret;
+							settings["AccessToken"] = _Twitter.AccessToken;
+							settings["AccessTokenSecret"] = _Twitter.AccessTokenSecret;
+							settings.Save();
+						}
+						else
+						{
+							checkBoxPostTwitter.Checked = false;
+							MessageBox.Show("Twitter 連携をキャンセルします。\r\n" +
+								"再度認証するには、チェックボックスをクリックしてください。", "認証未実施", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						}
+					}
+					else
+						new KisaragiMessageBox("Twitter 連携用認証キーは既に存在しています。" +
+							"\r\nTwitter 連携を行うにはチェックを入れたままにしてください。", "通知", 2000);
+				}
+			};
+
+			// 音声ファイル使用要否
+			checkBoxNotifyVoice.Click += async (s, e) =>
+			{
+				if (checkBoxNotifyVoice.Checked)
+				{
+					var path = Properties.Settings.Default;
+
+					// 音声設定ファイルがない場合
+					if (!File.Exists(_SaveFileName))
+					{
+						var settings = new SettingsWindow();
+
+						if (settings.ShowDialog() == DialogResult.OK)
+							this.NotifyTime = settings.NotifyTime;
+
+						path["VoicePath"] = this.NotifyTime;
+						path.Save();
+
+						this._Json = new NotifyVoiceSettingJsonObject(_SaveFileName, settings.VoicePath);
+
+						if (!_IsSubscribed)
+						{
+							try
+							{
+								await _Json.SaveFileAsync();
+								await _Json.LoadFileAsync();
+								_OnTimeSignal.InvokingTimerSignalEventIgnition();
+							}
+							catch (IOException io)
+							{
+								WriteLine($"Exception = {io.Message}");
+							}
+
+							_IsSubscribed = true;
+						}
+					}
+					else
+					{
+						if (!_IsSubscribed)
+						{
+							new KisaragiMessageBox("音声ありモードにて、Kisaragi は動作します。\r\n" +
+								"※音声ファイル有無に関しては、設定にて変更できます。", "Kisaragi 設定モード : 音声あり", 1500);
+
+							this._Json = new NotifyVoiceSettingJsonObject(_SaveFileName, path.VoicePath);
+							await _Json.LoadFileAsync();
+							_OnTimeSignal.InvokingTimerSignalEventIgnition();
+						}
+						_IsSubscribed = true;
+					}
+				}
+			};
 		}
 
 		#endregion
@@ -96,10 +239,17 @@ namespace Kisaragi
 		/// <summary>
 		/// Kisaragi が起動した時に実行されるメソッド
 		/// </summary>
-		private async void Form1_Load(object sender, EventArgs e)
+		private void Form1_Load(object sender, EventArgs e)
 		{
-			this.MouseDown += new MouseEventHandler(KisaragiFormMouseDown);
-			this.MouseMove += new MouseEventHandler(KisaragiFormMouseMove);
+			// 各種イベントハンドラ登録
+			this._OnTimeSignal.MonitoringTimeChanged += _IsMonitoringTimeChanged;
+			this.MouseDown += KisaragiFormMouseDown;
+			this.MouseMove += KisaragiFormMouseMove;
+
+			// 各種メソッドコール
+			_WelcomeKisaragi();
+			_SettingKisaragiTasktray();
+			_ReadOAuthSettings();
 
 			// bitmap を Icon に変換する
 			var handle = Properties.Resources.logo.GetHicon();
@@ -110,64 +260,40 @@ namespace Kisaragi
 			this.notifyIcon.BalloonTipTitle = "Kisaragi 時報";
 			this.notifyIcon.ContextMenuStrip = this.ContextMenu;
 			this.notifyIcon.Visible = true;
-
-			if (!_IsSubscribed)
-			{
-				try
-				{
-					//音声設定ファイルがない場合、設定ファイルを作成
-					if (!File.Exists("voiceSettings.json"))
-						await _Json.CreateVoiceSettingFileAsync();
-					else
-						WriteLine("voiceSettings.json は既に生成済みです。");
-
-					await _Json.LoadSettingFileAsync();
-					await _TimerSignal.InvokingTimerSignalEventIgnitionAsync();
-				}
-				catch (Exception ex)
-				{
-					throw new ApplicationException($"音声ファイルがありません。フォルダパスを確認して下さい。{ex.Message}");
-				}
-
-				_IsSubscribed = true;
-			}
-
-			_WelcomeKisaragi();
-			_ReadOAuthSettings();
-			_SettingKisaragiTasktray();
 		}
 
+		/// <summary>
+		/// Kisaragi を起動した後に出るフォームにておもてなしを行います。
+		/// </summary>
+		/// <returns></returns>
+		private void _WelcomeKisaragi()
+		{
+			new KisaragiMessageBox("音声なしモードにて、Kisaragi は動作します。\r\n" +
+				"※音声ファイル有無に関しては、設定にて変更できます。", "Kisaragi 設定モード : 音声なし", 1500);
+
+			UserName.Text = Environment.UserName;
+		}
+
+		/// <summary>
+		/// 認証情報の読み込み 及び 設定を行います。
+		/// </summary>
 		private void _ReadOAuthSettings()
 		{
 			var settings = Properties.Settings.Default;
+			var consumerKey = (string)settings["ConsumerKey"];
+			var consumerSecret = (string)settings["ConsumerSecret"];
+			var accessToken = (string)settings["AccessToken"];
+			var accessTokenSecret = (string)settings["AccessTokenSecret"];
 
-			if (string.IsNullOrEmpty((string)settings["AccessToken"]))
-			{
-				// アクセストークンを設定ファイルに保存する
-				settings["AccessToken"] = _Twitter.AccessToken;
-				settings["AccessTokenSecret"] = _Twitter.AccessTokenSecret;
-				settings["UserId"] = _Twitter.UserId;
-				settings["ScreenName"] = _Twitter.ScreenName;
-				settings.Save();
-			}
-			else
-			{
-				WriteLine("設定ファイルは既に存在しています。");
+			// 設定ファイルから読み込む
+			_Twitter = new Twitter(consumerKey, consumerSecret, accessToken, accessTokenSecret, this._HttpClient);
 
-				var accessToken = (string)settings["AccessToken"];
-				var accessTokenSecret = (string)settings["AccessTokenSecret"];
-				var userId = (string)settings["UserId"];
-				var screenName = (string)settings["ScreenName"];
-
-				// 設定ファイルから読み込む
-				_Twitter = new Twitter(_ConsumerKey, _ConsumerKeySecret, accessToken, accessTokenSecret, userId, screenName, this.HttpClient);
-			}
-
-			// ----------------- Key Check ----------------------
-			WriteLine($"CK: {_Twitter.ConsumerKey}");
-			WriteLine($"CKS: {_Twitter.ConsumerKeySecret}");
-			WriteLine($"AT: {_Twitter.AccessToken}");
-			WriteLine($"ATS: {_Twitter.AccessTokenSecret}");
+			WriteLine("-------------------- Authorize Key ---------------------");
+			WriteLine($"CK: {_Twitter.ConsumerKey ?? null}");
+			WriteLine($"CKS: {_Twitter.ConsumerKeySecret ?? null}");
+			WriteLine($"AT: {_Twitter.AccessToken ?? null}");
+			WriteLine($"ATS: {_Twitter.AccessTokenSecret ?? null}");
+			WriteLine("-------------------- Authorize Key ---------------------");
 		}
 
 		/// <summary>
@@ -175,34 +301,24 @@ namespace Kisaragi
 		/// </summary>
 		private void _SettingKisaragiTasktray()
 		{
-			// Twitter 認証(&O)
-			OAuth.Click += async (s, e) =>
+			// Settings(&S)
+			Settings.Click += (s, e) =>
 			{
-				// 認証を実施します
-				await _Twitter.AuthorizeAsync();
-
-				// Form が Close したと同時に ShowDialog も完了する。
-				var oauth = new OAuthWindow();
-				if (oauth.ShowDialog() == DialogResult.OK)
-					await _Twitter.GetAccessTokenAsync(oauth.PinCode);
-
-				// 認証完了メッセージの投稿
-				await PostTwitterAsync("OAuth completed for Kisaragi.");
+				var settings = new SettingsWindow();
+				if (settings.ShowDialog() == DialogResult.OK)
+					this.NotifyTime = settings.NotifyTime;
 			};
 
 			// バージョン情報(&V) 
-			VersionInfo.Click += (s, e) =>
-				new VersionWindow().Show();
-
-			// テスト投稿(&P)
-			testPost.Click += async (s, e) =>
-				await PostTwitterAsync("Kisaragi 投稿テスト");
+			VersionInfo.Click += (s, e) => new VersionWindow().Show();
 
 			// Kisaragi の終了(&E)
 			ExitKisaragi.Click += (s, e) =>
 			{
-				this.Invoke(new Func<Task>(async () => await SoundHelpers._PlayingVoiceAsync(_Json.Voice[24])));
-				new KisaragiMessageBox("時報システムを終了します。", "Kisaragi 時報システム終了", 1500);
+				if (checkBoxNotifyVoice.Checked)
+					this.Invoke(new Func<Task>(async () => await _SoundHelpers._PlayingVoiceAsync(_Json.Voice[24])));
+
+				new KisaragiMessageBox("Kisaragi を終了します。", "Kisaragi 終了", 1500);
 				this.Close();
 			};
 		}
@@ -235,35 +351,27 @@ namespace Kisaragi
 		}
 
 		/// <summary>
-		/// Kisaragi を起動した後に出るフォームにておもてなしを行います。
-		/// </summary>
-		/// <returns></returns>
-		private void _WelcomeKisaragi()
-		{
-			// UserName
-			UserName.Text = Environment.UserName;
-
-			// Picture
-			ProfileIcon.Image = Properties.Resources.logo;
-
-			// bio
-			UserTweet.Text = "Welcome to Kisaragi.";
-		}
-
-		/// <summary>
-		/// Torst & Baloon Notify Settings.
-		/// </summary>
-		private async Task _SettingNotifyProperties(Utils<int> e)
-		{
-			ServicePointManager.Expect100Continue = false;
-			this.notifyIcon.BalloonTipText = $"{e.Args} 時だにゃーん('ω')\r\n#Kisaragiちゃん #Kisaragi時報システム";
-			await PostTwitterAsync(notifyIcon.BalloonTipText);
-		}
-
-		/// <summary>
 		/// 一定時間経過した時に発生するイベントメソッド
 		/// </summary>
 		private async void _IsMonitoringTimeChanged(object sender, Utils<int> e)
+		{
+			this._State = _EventState.OnTime;
+			await _NotifyAsync(e);
+		}
+
+		/// <summary>
+		/// アラーム機能イベントメソッド
+		/// </summary>
+		private async void _IsAlarmStateChanged(object sender, Utils<int> e)
+		{
+			this._State = _EventState.Alarm;
+			await _NotifyAsync(e);
+		}
+
+		/// <summary>
+		/// 通知イベントメソッド
+		/// </summary>
+		private async Task _NotifyAsync(Utils<int> e)
 		{
 			var os = Environment.OSVersion;
 
@@ -272,12 +380,26 @@ namespace Kisaragi
 			else
 				await _SettingNotifyProperties(e); // バルーン通知 : Windows 8 以前
 
-			this.notifyIcon.ShowBalloonTip(1000);
+			this.notifyIcon.ShowBalloonTip(2000);
 
-			// ♰U s i n g♰
-			this.Invoke(new Func<Task>(async () => await SoundHelpers._PlayingVoiceAsync(_Json.Voice[e.Args])));
-
+			if (checkBoxNotifyVoice.Checked)
+				this.Invoke(new Func<Task>(async () => await _SoundHelpers._PlayingVoiceAsync(_Json.Voice[e.Args])));
 		}
+
+		/// <summary>
+		/// トースト通知・バルーン通知のテキスト設定、Twitter 投稿を行います。
+		/// </summary>
+		private async Task _SettingNotifyProperties(Utils<int> e)
+		{
+			// 1時間毎の通知モード or アラームモード
+			var message = (this._State == _EventState.OnTime) ?
+				this.notifyIcon.BalloonTipText = $"{e.Args} 時をお知らせします('ω')\r\n#Kisaragi #Kisaragi時報システム" :
+				this.notifyIcon.BalloonTipText = $"タイマー終了！('ω')\r\n#Kisaragi #Kisaragi時報システム";
+
+			if (checkBoxPostTwitter.Checked)
+				await PostTwitterAsync(message);
+		}
+
 		/// <summary>
 		/// Twitter へ 投稿します。
 		/// </summary>
@@ -287,8 +409,7 @@ namespace Kisaragi
 			ServicePointManager.Expect100Continue = false;
 			var query = new Dictionary<string, string> { { "status", postData } };
 			var result = await _Twitter.Request("https://api.twitter.com/1.1/statuses/update.json", HttpMethod.Post, query);
-			if (result != null)
-				WriteLine(" ----------- 投稿に成功しました。------------------");
+			WriteLine($"result = {result}");
 		}
 
 		#endregion

@@ -9,6 +9,7 @@ namespace Kisaragi
 	/// </summary>
 	public partial class SplashWindow : Form
 	{
+
 		#region Constractor
 
 		public SplashWindow(int interval)
@@ -27,5 +28,6 @@ namespace Kisaragi
 		}
 
 		#endregion
+
 	}
 }

@@ -11,6 +11,7 @@ namespace Kisaragi.Helper
 	/// </summary>
 	internal class KisaragiMessageBox : IDisposable
 	{
+
 		#region Field Variable
 
 		private System.Threading.Timer _timer;

@@ -50,36 +50,36 @@ namespace Kisaragi.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string UserId {
+        public string ConsumerKey {
             get {
-                return ((string)(this["UserId"]));
+                return ((string)(this["ConsumerKey"]));
             }
             set {
-                this["UserId"] = value;
+                this["ConsumerKey"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ScreenName {
+        public string ConsumerSecret {
             get {
-                return ((string)(this["ScreenName"]));
+                return ((string)(this["ConsumerSecret"]));
             }
             set {
-                this["ScreenName"] = value;
+                this["ConsumerSecret"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OAuthToken {
+        public string VoicePath {
             get {
-                return ((string)(this["OAuthToken"]));
+                return ((string)(this["VoicePath"]));
             }
             set {
-                this["OAuthToken"] = value;
+                this["VoicePath"] = value;
             }
         }
     }

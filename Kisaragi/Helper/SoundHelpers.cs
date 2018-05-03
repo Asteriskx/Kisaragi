@@ -13,6 +13,7 @@ namespace Kisaragi.Helper
 	/// </summary>
 	public class SoundHelpers : IDisposable
 	{
+
 		#region Properties
 
 		/// <summary>
@@ -40,6 +41,8 @@ namespace Kisaragi.Helper
 		private SoundHelpers(string filePath) => this.FilePath = filePath;
 
 		#endregion
+
+		#region SoundHelpers Method's
 
 		/// <summary>
 		/// mciSendString の薄いラッパーメソッド
@@ -123,6 +126,10 @@ namespace Kisaragi.Helper
 			return new SoundHelpers(filePath);
 		}
 
+		#endregion
+
+		#region SoundHelpers Command's 
+
 		/// <summary>
 		/// 音声ファイルの再生状態を監視し、Tuple にて返却します。
 		/// </summary>
@@ -151,5 +158,8 @@ namespace Kisaragi.Helper
 		/// 後処理を行います。
 		/// </summary>
 		public void Dispose() => this.Close();
+
+		#endregion
+
 	}
 }

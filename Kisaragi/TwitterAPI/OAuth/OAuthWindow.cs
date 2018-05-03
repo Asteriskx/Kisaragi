@@ -7,7 +7,14 @@ namespace Kisaragi.TwitterAPI.OAuth
 	/// </summary>
 	public partial class OAuthWindow : Form
 	{
+
+		#region Properties
+
 		public string PinCode { get; set; }
+
+		#endregion
+
+		#region Constractor 
 
 		public OAuthWindow()
 		{
@@ -31,5 +38,8 @@ namespace Kisaragi.TwitterAPI.OAuth
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 		}
+
+		#endregion
+
 	}
 }

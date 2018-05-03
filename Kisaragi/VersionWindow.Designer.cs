@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VersionWindow));
 			this.MainTitle = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -133,10 +134,10 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.MainTitle);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "VersionWindow";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Kisaragi について";
-			this.Load += new System.EventHandler(this.VersionWindow_Load);
 			((System.ComponentModel.ISupportInitialize)(this.gitIcon)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.Twitter)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.kisaragi)).EndInit();

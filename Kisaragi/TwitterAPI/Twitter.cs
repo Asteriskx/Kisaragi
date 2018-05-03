@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 using Kisaragi.TwitterAPI.OAuth;
@@ -13,24 +13,62 @@ namespace Kisaragi.TwitterAPI
 	/// </summary>
 	public class Twitter : Credentials
 	{
+
+		#region Properties
+
 		private HttpClient _Client { get; set; }
 		public AuthKisaragi Auth { get; set; }
 		public Credentials Credentials { get; set; }
 
+		#endregion
+
+		#region Constractor 
+
+		/// <summary>
+		/// Twitter コンストラクタ : CK / CKS / HttpClient 版
+		/// </summary>
+		/// <param name="consumerKey"></param>
+		/// <param name="consumerKeySecret"></param>
+		/// <param name="client"></param>
 		public Twitter(string consumerKey, string consumerKeySecret, HttpClient client) : base(consumerKey, consumerKeySecret)
 		{
-			_Client = client;
-			Auth = new AuthKisaragi(client);
-			Credentials = new Credentials(consumerKey, consumerKeySecret);
+			this._Client = client;
+			this.Auth = new AuthKisaragi(client);
+			this.Credentials = new Credentials(consumerKey, consumerKeySecret);
 		}
 
-		public Twitter(string consumerKey, string consumerKeySecret, string accessToken, string accessTokenSecret,
-			string userId, string screenName, HttpClient client) : base(consumerKey, consumerKeySecret, accessToken, accessTokenSecret)
+		/// <summary>
+		/// Twitter コンストラクタ : CK / CKS / AT / ATS / HttpClient 版
+		/// </summary>
+		/// <param name="consumerKey"></param>
+		/// <param name="consumerKeySecret"></param>
+		/// <param name="accessToken"></param>
+		/// <param name="accessTokenSecret"></param>
+		/// <param name="client"></param>
+		public Twitter(string consumerKey, string consumerKeySecret, string accessToken, string accessTokenSecret, HttpClient client)
+			: base(consumerKey, consumerKeySecret, accessToken, accessTokenSecret)
 		{
-			_Client = client;
-			Auth = new AuthKisaragi(client);
-			Credentials = new Credentials(consumerKey, consumerKeySecret, accessToken, accessTokenSecret);
+			this._Client = client;
+			this.Auth = new AuthKisaragi(client);
+			this.Credentials = new Credentials(consumerKey, consumerKeySecret, accessToken, accessTokenSecret);
 		}
+
+		#endregion
+
+		#region Wrapper for AuthKisaragi Method's
+
+		/// <summary>
+		/// TODO : Twitter アカウント情報の生成
+		/// </summary>
+		/// <returns></returns>
+		/*
+		public async Task<Twitter> Create()
+		{
+			var account = this.Credentials;
+			return new Twitter(account.ConsumerKey ?? string.Empty,
+				account.ConsumerKeySecret ?? string.Empty, account.AccessToken ?? string.Empty, account.AccessTokenSecret ?? string.Empty, this._Client);
+		}
+		*/
 
 		/// <summary>
 		/// 認証を実施します。
@@ -68,6 +106,8 @@ namespace Kisaragi.TwitterAPI
 		/// <returns></returns>
 		public async Task GetAccessTokenAsync(string pin) =>
 			(this.AccessToken, this.AccessTokenSecret) = await this.Auth.GetAccessTokenAsync(Credentials, pin);
+
+		#endregion
 
 	}
 }
