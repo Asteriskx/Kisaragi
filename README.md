@@ -19,7 +19,7 @@ Kisaragi is TimeSignal Application for .NET
   もしくは、`Download ZIP`より　`Clone` します。  
   個人の環境に合わせて `Clone` する場所は決めてください。  
   
-- `DL` または `Clone` した Kisaragi を解凍し、`Kisaragi.sln` を開いてください。  
+- `DL` または `Clone` した Kisaragi を解凍し、`Kisaragi.sln` を開いてください。  
   Kisaragi の動作環境は `.NET Framework 4.7.1` が動作する環境が必須となります。  
   `Visual Studio 2017` をインストールすることで解決すると思います。 
 
