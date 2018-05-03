@@ -70,6 +70,7 @@
 			this.consumerKey.Font = new System.Drawing.Font("メイリオ", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.consumerKey.Location = new System.Drawing.Point(139, 170);
 			this.consumerKey.Name = "consumerKey";
+			this.consumerKey.PasswordChar = '●';
 			this.consumerKey.Size = new System.Drawing.Size(363, 24);
 			this.consumerKey.TabIndex = 2;
 			// 
@@ -78,6 +79,7 @@
 			this.consumerSecret.Font = new System.Drawing.Font("メイリオ", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.consumerSecret.Location = new System.Drawing.Point(139, 200);
 			this.consumerSecret.Name = "consumerSecret";
+			this.consumerSecret.PasswordChar = '●';
 			this.consumerSecret.Size = new System.Drawing.Size(363, 25);
 			this.consumerSecret.TabIndex = 3;
 			// 
