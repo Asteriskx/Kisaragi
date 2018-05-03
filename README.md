@@ -5,7 +5,7 @@ Kisaragi is TimeSignal Application for .NET
 ![logo](logo.png)
 
 ## Kisaragi is 何？
-作業に没頭する人向けの、時間お知らせサポートアプリですっっ('ω')  
+作業に没頭する人向けの、時間お知らせサポートアプリ('ω')  
 
 ## 主な機能
 - 1時間毎の通知：24h
@@ -16,7 +16,7 @@ Kisaragi is TimeSignal Application for .NET
 
 ## 使い方
 - Kisaragi を`Download ZIP`より、`Clone` します。  
-  個人の環境に合わせて 'Clone' する場所は決めてください。  
+  個人の環境に合わせて `Clone` する場所は決めてください。  
   
 - `Clone` した Kisaragi を解凍し、`Kisaragi.sln` を開いてください。  
   Kisaragi の動作環境は `.NET Framework 4.7.1` が動作する環境が必須となります。  
@@ -54,6 +54,13 @@ Kisaragi is TimeSignal Application for .NET
 #### Twitter アプリ連携にて取得した PIN Code の設定画面  
 
 ![settings-Step2](settings-Step2.png)
+
+## 不具合に関して  
+- お手数おかけしますが、以下に連絡をお願い致します。  
+  使用日時、使用環境、不具合が出るまでの手順を伝えて頂けると幸いです。  
+  
+GitHub : [GitHub](https://github.com/Asteriskx/Kisaragi/issues "GitHub")  
+Twitter: [Twitter](https://twitter.com/Astrisk_ "Twitter")  
 
 ## History
 2018-03-13 時点：  
