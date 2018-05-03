@@ -15,10 +15,11 @@ Kisaragi is TimeSignal Application for .NET
 - タスクトレイ常駐：設定、バージョン情報、終了はここから行います。
 
 ## 使い方
-- Kisaragi を`Download ZIP`より、`Clone` します。  
-  個人の環境に合わせて `Clone` する場所は決めてください。  
+- Kisaragi を [v1.0.0](https://github.com/Asteriskx/Kisaragi/releases/tag/v1.0.0 "v.1.0.0") より、DL します。  
+  もしくは、`Download ZIP`より　`Clone` します。  
+  個人の環境に合わせて `Clone` する場所は決めてください。  
   
-- `Clone` した Kisaragi を解凍し、`Kisaragi.sln` を開いてください。  
+- `DL` または `Clone` した Kisaragi を解凍し、`Kisaragi.sln` を開いてください。  
   Kisaragi の動作環境は `.NET Framework 4.7.1` が動作する環境が必須となります。  
   `Visual Studio 2017` をインストールすることで解決すると思います。 
 
@@ -87,6 +88,7 @@ Twitter: [Twitter](https://twitter.com/Astrisk_ "Twitter")
   - Twitter 連携時の認証キーを GUI 上から入力可能に  
   
 - 使用方法を記載中。
+- v.1.0.0 リリース。
  
 ## License for Kisaragi
 MIT License
@@ -95,8 +97,8 @@ MIT License
 - OS
   - Windows 10 Home
 
-- IDE
-  - Visual Studio 2017 Community (C# 7.1, .NET Framework 4.7.1)
+- IDE  
+  - Visual Studio 2017 Community (C# 7.1, .NET Framework 4.7.1)
   - Visual Studio Code 1.12
   - SmartGit
   
