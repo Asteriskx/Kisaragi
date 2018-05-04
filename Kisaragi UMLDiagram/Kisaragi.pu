@@ -1,80 +1,221 @@
 @startuml kisaragi
 
 class Kisaragi {
-    - private TimerSignal _TimerSignal { get; set; } = new TimerSignal(1000);
-    + public Helpers Helpers { get; set; } = new Helpers();
-    - private SettingJson _Json { get; set; } = new SettingJson();
+    - private enum _EventState { OnTime, Alarm, Others }
+    - private const string _SaveFileName
+
     - private bool _isSubscribed
+    - private Point _Position
+
+    - private HttpClient _HttpClient { get; set; } = new HttpClient(new HttpClientHandler());
+    - private NotifyVoiceSettingJsonObject _Json { get; set; }
+    - private SoundHelpers _SoundHelpers { get; set; } = new SoundHelpers();
+    - private TimerSignal _OnTimeSignal { get; set; }
+    - private TimerSignal _AlarmSignal { get; set; }
+    + public TimeSpan NotifyTime { get; set; } = new TimeSpan(0, 1, 0);
+    - private Twitter _Twitter { get; set; }
+    - private _EventState _State { get; set; }
+    - private string _ConsumerKey { get; set; }
+    - private string _ConsumerSecret { get; set; }
 
     + public Kisaragi()
+
     - private async void Form1_Load(object sender, EventArgs e)
     - private void Form1_FormClosing(object sender, EventArgs e)
-    - private void _SettingNotifyProperties(Utils<int> e)
-    - private async Task _SettingKisaragiTasktrayAsync()
+    - private void _IsCheckBoxNotifyTimeChanged(object sender, EventArgs e)
+    - private async void _IsCheckBoxPostTwitterChanged(object sender, EventArgs e)
+    - private async void _IsCheckBoxNotifyVoiceChanged(object sender, EventArgs e)
+    - private void UsingNotifyAlarm()
+    - private async Task UsingPostTwitterAsync()
+    - private async Task UsingNotifyVoiceAsync()
+    - private async Task _WelcomeKisaragi()
+    - private void _ReadOAuthSettings()
+    - private void _SettingKisaragiTasktray()
+    - private void _KisaragiFormMouseDown(object sender, MouseEventArgs e)
+    - private void _KisaragiFormMouseMove(object sender, MouseEventArgs e)
     - private async void _IsMonitoringTimeChanged(object sender, Utils<int> e)
+    - private async void _IsAlarmStateChanged(object sender, Utils<int> e)
+    - private async Task _NotifyAsync(Utils<int> e)
+    - private void _SettingNotifyProperties(Utils<int> e)
+    - private async Task PostTwitterAsync(string postData)
 }
 
 class TimerSignal {
-    + public SettingJson Setting { get; set; } = new SettingJson();
     - private System.Timers.Timer _Polling { get; set; }
+    - private System.Timers.Timer _Alarm { get; set; }
+    - private Kisaragi _Kisaragi { get; set; }
+    - private Control _Msg { get; set; }
+
     + public int elapsedTime;
     - private int _interval;
+
     + public event EventHandler<Utils<int>> MonitoringTimeChanged;
-    + public TimerSignal(int interval)
-    + public async Task InvokingTimerSignalEventIgnitionAsync()
+    + public event EventHandler<Utils<int>> AlarmStateChanged;
+
+    + public TimerSignal(int interval, Control msg)
+    + public TimerSignal(int interval, Kisaragi kisaragi, Control msg)
+    + public void InvokingTimerSignalEventIgnition()
+    + public void InvokingAlarmEventIgnition(bool state)
+    + public void StopAlarm()
 }
 
-class Helper {
-    - private static readonly string _AliasName = "MediaFile";
+class SoundHelpers {
+    + public string FilePath { get; private set; }
+    + public string AliasName { get; private set; } = "MediaFile";
     - private static extern int mciSendString(string command, StringBuilder buffer, int bufferSize, IntPtr hwndCallback);
-    + public Helpers()
-    + public async Task _PlayingVoiceAsync(string fileName)
-    + public async Task _StoppedVoiceAsync()
+
+    + public SoundHelpers()
+    - private SoundHelpers(string filePath)
+
+    - private static (int action, string state) _MciCommand(string command, string aliasName)
+    + public async Task<SoundHelpers> _PlayingVoiceAsync(string filePath)
+    - private async Task _StoppedVoiceAsync(SoundHelpers sound)
+    + public static SoundHelpers Open(string filePath, string aliasName)
+    + public (int action, string state) Status()
+    + public void Play()
+    + public void Stop()
+    + public void Close()
+    + public void Dispose()
 }
 
 class Utils {
-    + public Utils(T args)
     + public T Args { get; private set; }
+    + public Utils(T args)
 }
 
-class SettingJson {
-    - private static readonly string _DefaultFilePath;
-    + public async Task CreateVoiceSettingFileAsync()
-    + public async Task LoadSettingFileAsync()
+class NotifyVoiceSettingJsonObject {
+    - private const string _DefaultFilePath;
+
+    - private List<string> _voiceData { get; set; } = new List<string>();
+
+    + public List<string> Voice;
+    - private string _VoicePath { get; set; }
+    - private string _FileName { get; set; }
+    + public NotifyVoiceSettingJsonObject(string fileName, string voicePath = null)
+
+    + public async Task LoadFileAsync()
+    + public async Task SaveFileAsync()
 }
 
 class KisaragiMessageBox {
     - private System.Threading.Timer _timer;
     - private string _caption;
     - private bool _disposed = false;
+
     - private SafeHandle _handle { get; set; } = new SafeFileHandle(IntPtr.Zero, true);
+
     + public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
     + public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
     + public KisaragiMessageBox(string text, string caption, int timeout)
+
     - private void _OnTimerElapsed(object state)
     + public void Dispose()
     # protected virtual void Dispose(bool disposing)
+}
+
+class AuthKisaragi {
+	- private const string REQUEST_TOKEN_URL;
+	- private const string ACCESS_TOKEN_URL;
+	- private const string AUTHORIZE_URL;
+
+    - private HttpClient _Http { get; set; }
+	- private Random _Rand { get; set; } = new Random();
+
+    + public AuthKisaragi(HttpClient httpClient)
+    + public async Task GetRequestTokenAsync(Credentials credentials)
+    + public Uri GetAuthorizeUrl(Credentials credentials)
+    + public async Task<(string accessToken, string accessTokenSecret)> GetAccessTokenAsync(Credentials credentials, string PIN)
+    - private string _OAuthParameters(IDictionary<string, string> parameters, string spl = "&", string braket = "")
+    + public async Task<string> RequestAsync(string consumerKey, string consumerKeySecret, string token, string tokenSecret, string url, HttpMethod type, IDictionary<string, string> parameters = null)
+    - private string _GenerateSignature(string consumerKeySecret, string tokenSecret, string httpMethod, string url, IDictionary<string, string> parameters)
+    - private SortedDictionary<string, string> _GenerateParameters(string token, string consumerKey)
+    - private Dictionary<string, string> _ParseStrings(string query)
+    - private string _GenerateNonce(int len)
+    + public string UrlEncode(string value)
+}
+
+class Credentials {
+    + public Credentials(string consumerKey, string consumerKeySecret)
+    + public Credentials(string consumerKey, string consumerKeySecret, string accessToken, string accessTokenSecret)
+
+    + public string ConsumerKey { get; set; }
+	+ public string ConsumerKeySecret { get; set; }
+	+ public string RequestToken { get; set; }
+	+ public string RequestTokenSecret { get; set; }
+	+ public string AccessToken { get; set; }
+	+ public string AccessTokenSecret { get; set; }
+	+ public string UserId { get; set; }
+	+ public string ScreenName { get; set; }
+	+ public string PinCode { get; set; }
+}
+
+class Twitter {
+    - private HttpClient _Client { get; set; }
+	+ public AuthKisaragi Auth { get; set; }
+	+ public Credentials Credentials { get; set; }
+
+    + public Twitter(string consumerKey, string consumerKeySecret, HttpClient client) : base(consumerKey, consumerKeySecret)
+    + public Twitter(string consumerKey, string consumerKeySecret, string accessToken, string accessTokenSecret, HttpClient client) : base(consumerKey, consumerKeySecret, accessToken, accessTokenSecret)
+    + public async Task AuthorizeAsync()
+    + public Task<string> Request(string url, HttpMethod type, IDictionary<string, string> query)
+    + public async Task GetAccessTokenAsync(string pin)
+}
+
+class OAuthWindow {
+    + public string PinCode { get; set; }
+
+    + public OAuthWindow()
+}
+
+class KeyWindow {
+    + public (string ck, string cks) CkPair { get; private set; }
+
+    + public KeyWindow(string ck, string cks)
+}
+
+class SettingsWindow {
+	+ public TimeSpan NotifyTime { get; private set; }
+	+ public string VoicePath { get; private set; }
+
+    + public SettingsWindow(string voicePath = null)
+}
+
+class SplashWindow {
+    + public SplashWindow(int interval)
 }
 
 class VersionWindow {
     + public VersionWindow()
 }
 
-interface IKisaragi {
-    + event EventHandler<Utils<int>> MonitoringTimeChanged;
+class Program {
+    + static void Main()
 }
 
+interface IKisaragi {
+    + event EventHandler<Utils<int>> MonitoringTimeChanged;
+    + event EventHandler<Utils<int>> AlarmStateChanged;
+}
+
+SplashWindow <.. Program
 Kisaragi <|-- Form
-Kisaragi ..> SettingJson
-Kisaragi ..> Helper
+Kisaragi <.. Program
+Kisaragi ..> NotifyVoiceSettingJsonObject
+Kisaragi ..> SoundHelpers
 Kisaragi ..> Utils
+Kisaragi ..> Twitter
 Kisaragi ..> KisaragiMessageBox
 Kisaragi ..> VersionWindow
+Kisaragi ..> SettingsWindow
+Kisaragi ..> KeyWindow
+Kisaragi ..> OAuthWindow
 TimerSignal ..> Utils
 TimerSignal ..> Kisaragi
 TimerSignal <.. Kisaragi
 TimerSignal <|-- IKisaragi
+Twitter ..> AuthKisaragi
+Twitter <|-- Credentials
 Utils <|-- EventArgs
-
 
 @enduml
