@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Kisaragi.APIs.OAuth;
 
-namespace Kisaragi.APIs
+namespace Kisaragi.APIs.Twitter
 {
 	/// <summary>
 	/// Twitter へ アクセスするための ラッパークラス
