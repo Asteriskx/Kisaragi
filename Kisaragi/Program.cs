@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 
+using Kisaragi.Views;
+
 namespace Kisaragi
 {
 	static class Program
@@ -18,7 +20,7 @@ namespace Kisaragi
 			using (var splash = new SplashWindow(3000))
 				splash.ShowDialog();
 
-			Application.Run(new Kisaragi());
+			Application.Run(new Views.Kisaragi());
 		}
 	}
 }

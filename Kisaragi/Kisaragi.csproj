@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>logo.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\logo.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Kisaragi.Program</StartupObject>
@@ -58,66 +58,66 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="Views\Kisaragi.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Views\Kisaragi.Designer.cs">
+      <DependentUpon>Kisaragi.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helper\KisaragiMessageBox.cs" />
-    <Compile Include="Helper\SoundHelpers.cs" />
-    <Compile Include="TwitterAPI\OAuth\KeyWindow.cs">
+    <Compile Include="Helpers\KisaragiMessageBox.cs" />
+    <Compile Include="Helpers\SoundHelpers.cs" />
+    <Compile Include="APIs\OAuth\KeyWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TwitterAPI\OAuth\KeyWindow.Designer.cs">
+    <Compile Include="APIs\OAuth\KeyWindow.Designer.cs">
       <DependentUpon>KeyWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="SettingsWindow.cs">
+    <Compile Include="Views\SettingsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SettingsWindow.Designer.cs">
+    <Compile Include="Views\SettingsWindow.Designer.cs">
       <DependentUpon>SettingsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="SplashWindow.cs">
+    <Compile Include="Views\SplashWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SplashWindow.Designer.cs">
+    <Compile Include="Views\SplashWindow.Designer.cs">
       <DependentUpon>SplashWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="TwitterAPI\OAuth\AuthKisagari.cs" />
-    <Compile Include="Helper\TimerSignal.cs" />
-    <Compile Include="TwitterAPI\OAuth\Credentials.cs" />
-    <Compile Include="TwitterAPI\OAuth\OAuthWindow.cs">
+    <Compile Include="APIs\OAuth\AuthKisagari.cs" />
+    <Compile Include="Models\TimerSignal.cs" />
+    <Compile Include="APIs\OAuth\Credentials.cs" />
+    <Compile Include="APIs\OAuth\OAuthWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TwitterAPI\OAuth\OAuthWindow.Designer.cs">
+    <Compile Include="APIs\OAuth\OAuthWindow.Designer.cs">
       <DependentUpon>OAuthWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Helper\NotifyVoiceSettingJsonObject.cs" />
-    <Compile Include="TwitterAPI\Twitter.cs" />
+    <Compile Include="Helpers\NotifyVoiceSettingJsonObject.cs" />
+    <Compile Include="APIs\Twitter\Twitter.cs" />
     <Compile Include="Util\IKisaragi.cs" />
     <Compile Include="Util\Utils.cs" />
-    <Compile Include="VersionWindow.cs">
+    <Compile Include="Views\VersionWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VersionWindow.Designer.cs">
+    <Compile Include="Views\VersionWindow.Designer.cs">
       <DependentUpon>VersionWindow.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="Views\Kisaragi.resx">
+      <DependentUpon>Kisaragi.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TwitterAPI\OAuth\KeyWindow.resx">
+    <EmbeddedResource Include="APIs\OAuth\KeyWindow.resx">
       <DependentUpon>KeyWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SettingsWindow.resx">
+    <EmbeddedResource Include="Views\SettingsWindow.resx">
       <DependentUpon>SettingsWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SplashWindow.resx">
+    <EmbeddedResource Include="Views\SplashWindow.resx">
       <DependentUpon>SplashWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TwitterAPI\OAuth\OauthWindow.resx">
+    <EmbeddedResource Include="APIs\OAuth\OauthWindow.resx">
       <DependentUpon>OAuthWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -130,10 +130,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="VersionWindow.resx">
+    <EmbeddedResource Include="Views\VersionWindow.resx">
       <DependentUpon>VersionWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="packages.config" />
+    <None Include="Configs\packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -145,7 +145,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="Configs\App.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\GitHub-Mark.png" />
@@ -160,7 +160,8 @@
     <None Include="Resources\asterisk.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="logo.ico" />
+    <Content Include="Resources\logo.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
