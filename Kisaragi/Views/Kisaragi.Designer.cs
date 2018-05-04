@@ -46,9 +46,6 @@
 			this.checkBoxPostTwitter = new System.Windows.Forms.CheckBox();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.checkBoxNotifyVoice = new System.Windows.Forms.CheckBox();
-			this.PowerManager = new System.Windows.Forms.ToolStripMenuItem();
-			this.SleepTimer = new System.Windows.Forms.ToolStripMenuItem();
-			this.ShutDownTimer = new System.Windows.Forms.ToolStripMenuItem();
 			this.ContextMenu.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.ProfileIcon)).BeginInit();
 			this.SuspendLayout();
@@ -64,11 +61,10 @@
             this.Settings,
             this.MonitorSize,
             this.VersionInfo,
-            this.ExitKisaragi,
-            this.PowerManager});
+            this.ExitKisaragi});
 			this.ContextMenu.Name = "ContextMenu";
 			this.ContextMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-			this.ContextMenu.Size = new System.Drawing.Size(167, 136);
+			this.ContextMenu.Size = new System.Drawing.Size(167, 92);
 			// 
 			// Settings
 			// 
@@ -201,27 +197,6 @@
 			this.checkBoxNotifyVoice.Text = "Using NotifyVoice";
 			this.checkBoxNotifyVoice.UseVisualStyleBackColor = true;
 			// 
-			// PowerManager
-			// 
-			this.PowerManager.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.SleepTimer,
-            this.ShutDownTimer});
-			this.PowerManager.Name = "PowerManager";
-			this.PowerManager.Size = new System.Drawing.Size(166, 22);
-			this.PowerManager.Text = "電源管理(&P)";
-			// 
-			// SleepTimer
-			// 
-			this.SleepTimer.Name = "SleepTimer";
-			this.SleepTimer.Size = new System.Drawing.Size(184, 22);
-			this.SleepTimer.Text = "スリーブタイマー(&S)";
-			// 
-			// ShutDownTimer
-			// 
-			this.ShutDownTimer.Name = "ShutDownTimer";
-			this.ShutDownTimer.Size = new System.Drawing.Size(184, 22);
-			this.ShutDownTimer.Text = "シャットダウンタイマー(&S)";
-			// 
 			// Kisaragi
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -267,8 +242,5 @@
 		private System.Windows.Forms.ToolStripMenuItem MonitorSize;
 		private System.Windows.Forms.ToolStripMenuItem MonitorDefault;
 		private System.Windows.Forms.ToolStripMenuItem MonitorMinimum;
-		private System.Windows.Forms.ToolStripMenuItem PowerManager;
-		private System.Windows.Forms.ToolStripMenuItem SleepTimer;
-		private System.Windows.Forms.ToolStripMenuItem ShutDownTimer;
 	}
 }
