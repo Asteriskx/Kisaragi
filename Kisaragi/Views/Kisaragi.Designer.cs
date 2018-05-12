@@ -38,7 +38,6 @@
 			this.MonitorMinimum = new System.Windows.Forms.ToolStripMenuItem();
 			this.VersionInfo = new System.Windows.Forms.ToolStripMenuItem();
 			this.ExitKisaragi = new System.Windows.Forms.ToolStripMenuItem();
-			this.ProfileIcon = new System.Windows.Forms.PictureBox();
 			this.UserID = new System.Windows.Forms.Label();
 			this.UserName = new System.Windows.Forms.Label();
 			this.MultiMsg = new System.Windows.Forms.Label();
@@ -46,6 +45,8 @@
 			this.checkBoxPostTwitter = new System.Windows.Forms.CheckBox();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.checkBoxNotifyVoice = new System.Windows.Forms.CheckBox();
+			this.ProfileIcon = new System.Windows.Forms.PictureBox();
+			this.TwitterForm = new System.Windows.Forms.ToolStripMenuItem();
 			this.ContextMenu.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.ProfileIcon)).BeginInit();
 			this.SuspendLayout();
@@ -60,16 +61,17 @@
 			this.ContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Settings,
             this.MonitorSize,
+            this.TwitterForm,
             this.VersionInfo,
             this.ExitKisaragi});
 			this.ContextMenu.Name = "ContextMenu";
 			this.ContextMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-			this.ContextMenu.Size = new System.Drawing.Size(167, 92);
+			this.ContextMenu.Size = new System.Drawing.Size(184, 136);
 			// 
 			// Settings
 			// 
 			this.Settings.Name = "Settings";
-			this.Settings.Size = new System.Drawing.Size(166, 22);
+			this.Settings.Size = new System.Drawing.Size(183, 22);
 			this.Settings.Text = "Settings(&S)";
 			// 
 			// MonitorSize
@@ -78,44 +80,32 @@
             this.MonitorDefault,
             this.MonitorMinimum});
 			this.MonitorSize.Name = "MonitorSize";
-			this.MonitorSize.Size = new System.Drawing.Size(166, 22);
+			this.MonitorSize.Size = new System.Drawing.Size(183, 22);
 			this.MonitorSize.Text = "画面(&M)";
 			// 
 			// MonitorDefault
 			// 
 			this.MonitorDefault.Name = "MonitorDefault";
-			this.MonitorDefault.Size = new System.Drawing.Size(129, 22);
+			this.MonitorDefault.Size = new System.Drawing.Size(152, 22);
 			this.MonitorDefault.Text = "通常(&D)";
 			// 
 			// MonitorMinimum
 			// 
 			this.MonitorMinimum.Name = "MonitorMinimum";
-			this.MonitorMinimum.Size = new System.Drawing.Size(129, 22);
+			this.MonitorMinimum.Size = new System.Drawing.Size(152, 22);
 			this.MonitorMinimum.Text = "最小化(&M)";
 			// 
 			// VersionInfo
 			// 
 			this.VersionInfo.Name = "VersionInfo";
-			this.VersionInfo.Size = new System.Drawing.Size(166, 22);
+			this.VersionInfo.Size = new System.Drawing.Size(183, 22);
 			this.VersionInfo.Text = "バージョン情報(&V)";
 			// 
 			// ExitKisaragi
 			// 
 			this.ExitKisaragi.Name = "ExitKisaragi";
-			this.ExitKisaragi.Size = new System.Drawing.Size(166, 22);
+			this.ExitKisaragi.Size = new System.Drawing.Size(183, 22);
 			this.ExitKisaragi.Text = "Kisaragi の終了(&E)";
-			// 
-			// ProfileIcon
-			// 
-			this.ProfileIcon.BackgroundImage = global::Kisaragi.Properties.Resources.logo;
-			this.ProfileIcon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-			this.ProfileIcon.InitialImage = null;
-			this.ProfileIcon.Location = new System.Drawing.Point(12, 12);
-			this.ProfileIcon.Name = "ProfileIcon";
-			this.ProfileIcon.Size = new System.Drawing.Size(145, 152);
-			this.ProfileIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-			this.ProfileIcon.TabIndex = 1;
-			this.ProfileIcon.TabStop = false;
 			// 
 			// UserID
 			// 
@@ -197,6 +187,24 @@
 			this.checkBoxNotifyVoice.Text = "Using NotifyVoice";
 			this.checkBoxNotifyVoice.UseVisualStyleBackColor = true;
 			// 
+			// ProfileIcon
+			// 
+			this.ProfileIcon.BackgroundImage = global::Kisaragi.Properties.Resources.logo;
+			this.ProfileIcon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+			this.ProfileIcon.InitialImage = null;
+			this.ProfileIcon.Location = new System.Drawing.Point(12, 12);
+			this.ProfileIcon.Name = "ProfileIcon";
+			this.ProfileIcon.Size = new System.Drawing.Size(145, 152);
+			this.ProfileIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+			this.ProfileIcon.TabIndex = 1;
+			this.ProfileIcon.TabStop = false;
+			// 
+			// TwitterForm
+			// 
+			this.TwitterForm.Name = "TwitterForm";
+			this.TwitterForm.Size = new System.Drawing.Size(183, 22);
+			this.TwitterForm.Text = "Twitter 投稿フォーム(&T)";
+			// 
 			// Kisaragi
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -215,8 +223,8 @@
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "Kisaragi";
 			this.Text = "Kisagagi";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
-			this.Load += new System.EventHandler(this.Form1_Load);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Kisaragi_FormClosing);
+			this.Load += new System.EventHandler(this.Kisaragi_Load);
 			this.ContextMenu.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.ProfileIcon)).EndInit();
 			this.ResumeLayout(false);
@@ -242,5 +250,6 @@
 		private System.Windows.Forms.ToolStripMenuItem MonitorSize;
 		private System.Windows.Forms.ToolStripMenuItem MonitorDefault;
 		private System.Windows.Forms.ToolStripMenuItem MonitorMinimum;
+		private System.Windows.Forms.ToolStripMenuItem TwitterForm;
 	}
 }

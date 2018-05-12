@@ -93,7 +93,7 @@ namespace Kisaragi.APIs.OAuth
 		/// </summary>
 		/// <param name="PIN"></param>
 		/// <returns></returns>
-		public async Task<(string accessToken, string accessTokenSecret)> GetAccessTokenAsync(Credentials credentials, string PIN)
+		public async Task<(string at, string ats, string uid, string sn)> GetAccessTokenAsync(Credentials credentials, string PIN)
 		{
 			Debug.WriteLine("------------ アクセストークン 生成開始 ----------------- >> " + PIN);
 
@@ -111,7 +111,7 @@ namespace Kisaragi.APIs.OAuth
 
 			Debug.WriteLine("------------ アクセストークン 生成完了 -----------------");
 
-			return (credentials.AccessToken, credentials.AccessTokenSecret);
+			return (credentials.AccessToken, credentials.AccessTokenSecret, credentials.UserId, credentials.ScreenName);
 		}
 
 		/// <summary>

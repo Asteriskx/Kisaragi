@@ -24,6 +24,18 @@
 			this.AccessTokenSecret = accessTokenSecret;
 		}
 
+		// 投稿フォーム用
+		public Credentials(string consumerKey, string consumerKeySecret, 
+			string accessToken, string accessTokenSecret, string userId, string screenName)
+		{
+			this.ConsumerKey = consumerKey;
+			this.ConsumerKeySecret = consumerKeySecret;
+			this.AccessToken = accessToken;
+			this.AccessTokenSecret = accessTokenSecret;
+			this.UserId = userId;
+			this.ScreenName = screenName;
+		}
+
 		#endregion
 
 		#region Properties.
