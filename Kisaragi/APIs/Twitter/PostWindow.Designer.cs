@@ -45,6 +45,7 @@
 			// PostForm
 			// 
 			this.PostForm.BackColor = System.Drawing.Color.Black;
+			this.PostForm.EnableAutoDragDrop = true;
 			this.PostForm.Font = new System.Drawing.Font("メイリオ", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
 			this.PostForm.ForeColor = System.Drawing.Color.White;
 			this.PostForm.Location = new System.Drawing.Point(12, 88);
@@ -158,7 +159,7 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "PostWindow";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "投稿フォーム";
 			this.Load += new System.EventHandler(this.PostWindow_Load);
 			this.statusStrip.ResumeLayout(false);

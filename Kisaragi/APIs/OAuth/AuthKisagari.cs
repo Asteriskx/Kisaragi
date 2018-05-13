@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -134,7 +135,7 @@ namespace Kisaragi.APIs.OAuth
 		/// <param name="oauthParameters"></param>
 		/// <returns></returns>
 		public async Task<string> RequestAsync(string consumerKey, string consumerKeySecret,
-			string token, string tokenSecret, string url, HttpMethod type, IDictionary<string, string> parameters = null)
+			string token, string tokenSecret, string url, HttpMethod type, IDictionary<string, string> parameters = null, Stream stream = null)
 		{
 			Debug.WriteLine("------------ リクエスト開始 ----------------- >> " + type.ToString() + " " + url);
 
@@ -175,8 +176,16 @@ namespace Kisaragi.APIs.OAuth
 					if (type == HttpMethod.Post)
 					{
 						// ユーザが指定するパラメータを body に格納 e.g.) [status]
-						if (parameters != null)
+						if (stream == null)
+						{
 							request.Content = new FormUrlEncodedContent(parameters);
+						}
+						else
+						{
+							var multi = new MultipartFormDataContent("hoge");
+							multi.Add(new StreamContent(stream), "media");
+							request.Content = multi;
+						}
 
 						Debug.WriteLine($"---------------- リクエストヘッダ情報 {type.ToString()} --------------------");
 						Debug.WriteLine($" Body   : {await request.Content.ReadAsStringAsync()}");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
@@ -109,10 +110,12 @@ namespace Kisaragi.APIs.Twitter
 		/// <param name="type"></param>
 		/// <param name=""></param>
 		/// <returns></returns>
-		public Task<string> Request(string url, HttpMethod type, IDictionary<string, string> query)
+		public Task<string> Request(string url, HttpMethod type, IDictionary<string, string> query, Stream stream = null)
 		{
-			return this.Auth.RequestAsync(Credentials.ConsumerKey, Credentials.ConsumerKeySecret,
-				Credentials.AccessToken, Credentials.AccessTokenSecret, url, type, query);
+			if (stream == null)
+				return this.Auth.RequestAsync(Credentials.ConsumerKey, Credentials.ConsumerKeySecret, Credentials.AccessToken, Credentials.AccessTokenSecret, url, type, query);
+			else
+				return this.Auth.RequestAsync(Credentials.ConsumerKey, Credentials.ConsumerKeySecret, Credentials.AccessToken, Credentials.AccessTokenSecret, url, type, query, stream);
 		}
 
 		/// <summary>
