@@ -61,7 +61,6 @@ namespace Kisaragi.APIs.Twitter
 			this.MouseMove += _PostWindowFormMouseMove;
 			PostButton.Click += _IsPostStatusChanged;
 			CloseButton.Click += _IsCloseStatusChanged;
-			UserImage.Click += (s, ee) => Process.Start("https://twitter.com/Astrisk_");
 
 			// テキストボックス内キーアサイン：Twitter へ投稿 (Ctrl + Enter)
 			this.PostForm.KeyDown += async (s, ee) =>
@@ -80,6 +79,7 @@ namespace Kisaragi.APIs.Twitter
 
 			// Twitter プロフィールを取得します。
 			await _GetMineTwitterProfileAsync();
+			UserImage.Click += (s, ee) => Process.Start("https://twitter.com/" + _Twitter.ScreenName);
 		}
 
 		/// <summary>
