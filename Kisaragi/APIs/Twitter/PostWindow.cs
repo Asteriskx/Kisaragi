@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Net;
 using System.Net.Http;
@@ -41,10 +42,7 @@ namespace Kisaragi.APIs.Twitter
 		public PostWindow(Twitter twitter)
 		{
 			InitializeComponent();
-
 			this._Twitter = twitter;
-			this.MouseDown += _PostWindowFormMouseDown;
-			this.MouseMove += _PostWindowFormMouseMove;
 		}
 
 		#endregion
@@ -59,8 +57,18 @@ namespace Kisaragi.APIs.Twitter
 		private async void PostWindow_Load(object sender, EventArgs e)
 		{
 			// 各種イベント登録
+			this.MouseDown += _PostWindowFormMouseDown;
+			this.MouseMove += _PostWindowFormMouseMove;
 			PostButton.Click += _IsPostStatusChanged;
 			CloseButton.Click += _IsCloseStatusChanged;
+			UserImage.Click += (s, ee) => Process.Start("https://twitter.com/Astrisk_");
+
+			// テキストボックス内キーアサイン：Twitter へ投稿 (Ctrl + Enter)
+			this.PostForm.KeyDown += async (s, ee) =>
+			{
+				if ((ee.KeyData & Keys.Control) == Keys.Control && (ee.KeyData & Keys.Enter) == Keys.Enter)
+					await _PostAsync();
+			};
 
 			// テキストボックスの状態変化時
 			this.PostForm.TextChanged += (s, ee) =>
@@ -103,6 +111,12 @@ namespace Kisaragi.APIs.Twitter
 			var query = new Dictionary<string, string> { { "status", this.PostForm.Text } };
 			var result = await _Twitter.Request("https://api.twitter.com/1.1/statuses/update.json", HttpMethod.Post, query);
 			WriteLine($"result = {result}");
+
+			// UIスレッド更新
+			this.Invoke((MethodInvoker)delegate
+			{
+				Status.Text = "Twitter へ投稿しました！";
+			});
 		}
 
 		/// <summary>
@@ -152,6 +166,7 @@ namespace Kisaragi.APIs.Twitter
 					UserName.Text = json.name;
 					ScreenName.Text = $"@{json.screen_name}";
 					UserImage.ImageLocation = json.profile_image_url;
+					Status.Text = "Twitter へ接続しました...";
 				});
 			}
 			catch (Exception ex) { WriteLine($"User is not found.\r\n{ex.Message}\r\n{ex.StackTrace}"); };

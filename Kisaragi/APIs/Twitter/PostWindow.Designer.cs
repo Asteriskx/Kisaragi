@@ -35,7 +35,7 @@
 			this.PostButton = new System.Windows.Forms.Button();
 			this.StringCounter = new System.Windows.Forms.Label();
 			this.statusStrip = new System.Windows.Forms.StatusStrip();
-			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+			this.Status = new System.Windows.Forms.ToolStripStatusLabel();
 			this.UserImage = new System.Windows.Forms.PictureBox();
 			this.CloseButton = new System.Windows.Forms.Button();
 			this.statusStrip.SuspendLayout();
@@ -104,20 +104,20 @@
 			// 
 			this.statusStrip.BackColor = System.Drawing.Color.DimGray;
 			this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
+            this.Status});
 			this.statusStrip.Location = new System.Drawing.Point(0, 192);
 			this.statusStrip.Name = "statusStrip";
 			this.statusStrip.Size = new System.Drawing.Size(344, 22);
 			this.statusStrip.TabIndex = 6;
 			this.statusStrip.Text = "statusStrip1";
 			// 
-			// toolStripStatusLabel1
+			// Status
 			// 
-			this.toolStripStatusLabel1.Font = new System.Drawing.Font("Yu Gothic UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-			this.toolStripStatusLabel1.ForeColor = System.Drawing.Color.White;
-			this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-			this.toolStripStatusLabel1.Size = new System.Drawing.Size(51, 17);
-			this.toolStripStatusLabel1.Text = "準備完了";
+			this.Status.Font = new System.Drawing.Font("Yu Gothic UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+			this.Status.ForeColor = System.Drawing.Color.White;
+			this.Status.Name = "Status";
+			this.Status.Size = new System.Drawing.Size(51, 17);
+			this.Status.Text = "準備完了";
 			// 
 			// UserImage
 			// 
@@ -178,7 +178,7 @@
 		private System.Windows.Forms.Button PostButton;
 		private System.Windows.Forms.Label StringCounter;
 		private System.Windows.Forms.StatusStrip statusStrip;
-		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+		private System.Windows.Forms.ToolStripStatusLabel Status;
 		private System.Windows.Forms.Button CloseButton;
 	}
 }
