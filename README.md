@@ -10,12 +10,12 @@ Kisaragi is TimeSignal Application for .NET
 ## 主な機能
 - 1時間毎の通知：24h
 - アラーム機能：任意の時間にて設定できます。設定単位：分
-- Twitter 連携機能：ライブラリ：自作, 通知メッセージを投稿
+- Twitter 連携機能：ライブラリ：自作, 通知の投稿、投稿専用クライアント機能。
 - ボイス機能：音声ファイルを使用することにより、通知をより分かりやすくできます。
 - タスクトレイ常駐：設定、画面サイズ変更、バージョン情報、終了はここから行います。
 
 ## 使い方
-- Kisaragi を [v1.2.0](https://github.com/Asteriskx/Kisaragi/releases/tag/v1.2.0 "v.1.2.0") より、DL します。  
+- Kisaragi を [v1.2.1](https://github.com/Asteriskx/Kisaragi/releases/tag/v1.2.1 "v.1.2.1") より、DL します。  
   もしくは、`Download ZIP`より　`Clone` します。  
   個人の環境に合わせて `Clone` する場所は決めてください。  
   
@@ -108,6 +108,9 @@ Usage 等に関しても記載していきます。~~
 - 細かなリファクタリングを実施しました。  
 - Twitter 投稿フォームにて、画像投稿が可能となりました。 　
 - v.1.2.0 リリース。  
+
+2018-05-14 時点：  
+- v.1.2.1 リリース。(投稿フォームバグ修正)  
 
 ## License for Kisaragi
 MIT License
