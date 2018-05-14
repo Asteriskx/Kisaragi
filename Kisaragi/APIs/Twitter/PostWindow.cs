@@ -166,6 +166,10 @@ namespace Kisaragi.APIs.Twitter
 			{
 				// 画像あり
 				query = new Dictionary<string, string> { { type, tweet }, { mediaType, mediaId } };
+
+				// 同ツイートをしないよう、ファイルパス、画像 ID を初期化
+				_PicturePath = string.Empty;
+				_MediaId = string.Empty;
 			}
 
 			var result = await _Twitter.Request(url, HttpMethod.Post, query);
