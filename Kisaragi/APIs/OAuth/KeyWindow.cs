@@ -20,25 +20,30 @@ namespace Kisaragi.APIs.OAuth
 
 		#region Constractor 
 
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		/// <param name="ck">Consumer Key</param>
+		/// <param name="cks">Consumer Secret</param>
 		public KeyWindow(string ck, string cks)
 		{
-			InitializeComponent();
+			this.InitializeComponent();
 
-			consumerKey.Text += ck;
-			consumerSecret.Text += cks;
+			this.consumerKey.Text += ck;
+			this.consumerSecret.Text += cks;
 
-			appLink.Click += (s, e) => Process.Start(appLink.Text);
+			this.appLink.Click += (s, e) => Process.Start(this.appLink.Text);
 
-			OKButton.Click += (s, e) =>
+			this.OKButton.Click += (s, e) =>
 			{
-				this.CkPair = (consumerKey.Text, consumerSecret.Text);
-				DialogResult = DialogResult.OK;
+				this.CkPair = (this.consumerKey.Text, this.consumerSecret.Text);
+				this.DialogResult = DialogResult.OK;
 
 				this.Dispose();
 				this.Close();
 			};
 
-			CancelButton.Click += (s, e) =>
+			this.CancelButton.Click += (s, e) =>
 			{
 				this.Dispose();
 				this.Close();

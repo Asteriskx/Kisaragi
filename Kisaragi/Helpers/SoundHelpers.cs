@@ -37,7 +37,15 @@ namespace Kisaragi.Helper
 
 		#region Constractor
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public SoundHelpers() { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="filePath"></param>
 		private SoundHelpers(string filePath) => this.FilePath = filePath;
 
 		#endregion
@@ -119,8 +127,8 @@ namespace Kisaragi.Helper
 			if (!File.Exists(filePath))
 				throw new FileNotFoundException($"ファイルが存在しません。: {filePath}");
 
-			var mci = _MciCommand("open \"", $"{filePath} \" type mpegvideo alias {aliasName}");
-			if (mci.action == -1 && mci.state == "error")
+			var (action, state) = _MciCommand("open \"", $"{filePath} \" type mpegvideo alias {aliasName}");
+			if (action == -1 && state == "error")
 				throw new ApplicationException($"ファイルオープンに失敗しました。\"{filePath}\"");
 
 			return new SoundHelpers(filePath);

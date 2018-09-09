@@ -126,7 +126,10 @@ namespace Kisaragi.Views
 
 		#region Constractor
 
-		public Kisaragi() => InitializeComponent();
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		public Kisaragi() => this.InitializeComponent();
 
 		#endregion
 
@@ -145,19 +148,19 @@ namespace Kisaragi.Views
 			this.elapsedTime = DateTime.Now.Second;
 
 			// 各種イベントハンドラ登録
-			this._CurrentTimeChanged += _IsCurrentTimeChanged;
-			this._OnTimeSignal.MonitoringTimeChanged += _IsMonitoringTimeChanged;
-			this.checkBoxNotifyTime.Click += _IsCheckBoxNotifyTimeChanged;
-			this.checkBoxPostTwitter.Click += _IsCheckBoxPostTwitterChanged;
-			this.checkBoxNotifyVoice.Click += _IsCheckBoxNotifyVoiceChanged;
-			this.MouseDown += _KisaragiFormMouseDown;
-			this.MouseMove += _KisaragiFormMouseMove;
+			this._CurrentTimeChanged += this._IsCurrentTimeChanged;
+			this._OnTimeSignal.MonitoringTimeChanged += this._IsMonitoringTimeChanged;
+			this.checkBoxNotifyTime.Click += this._IsCheckBoxNotifyTimeChanged;
+			this.checkBoxPostTwitter.Click += this._IsCheckBoxPostTwitterChanged;
+			this.checkBoxNotifyVoice.Click += this._IsCheckBoxNotifyVoiceChanged;
+			this.MouseDown += this._KisaragiFormMouseDown;
+			this.MouseMove += this._KisaragiFormMouseMove;
 
 			// 各種メソッドコール
-			await _WelcomeKisaragi();
-			_UpdateViewTime();
-			_SettingKisaragiTasktray();
-			_ReadOAuthSettings();
+			await this._WelcomeKisaragi();
+			this._UpdateViewTime();
+			this._SettingKisaragiTasktray();
+			this._ReadOAuthSettings();
 
 			// bitmap を Icon に変換する
 			var handle = Properties.Resources.logo.GetHicon();
@@ -178,12 +181,12 @@ namespace Kisaragi.Views
 			var settings = Properties.Settings.Default;
 
 			// 各種チェックボックスの値を保存
-			settings["AlarmCheck"] = checkBoxNotifyTime.Checked;
-			settings["PostTwitterCheck"] = checkBoxPostTwitter.Checked;
-			settings["VoiceCheck"] = checkBoxNotifyVoice.Checked;
+			settings["AlarmCheck"] = this.checkBoxNotifyTime.Checked;
+			settings["PostTwitterCheck"] = this.checkBoxPostTwitter.Checked;
+			settings["VoiceCheck"] = this.checkBoxNotifyVoice.Checked;
 			settings.Save();
 
-			_IsSubscribed = false;
+			this._IsSubscribed = false;
 		}
 
 		/// <summary>
@@ -191,54 +194,57 @@ namespace Kisaragi.Views
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void _IsCurrentTimeChanged(object sender, EventArgs e) => _UpdateViewTime();
+		private void _IsCurrentTimeChanged(object sender, EventArgs e) => this._UpdateViewTime();
 
 		/// <summary>
 		/// アラーム機能：チェックボックスクリックイベント発生時
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void _IsCheckBoxNotifyTimeChanged(object sender, EventArgs e) => _UsingNotifyAlarm();
+		private void _IsCheckBoxNotifyTimeChanged(object sender, EventArgs e) => this._UsingNotifyAlarm();
 
 		/// <summary>
 		/// Twitter 連携機能：チェックボックスクリックイベント発生時
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private async void _IsCheckBoxPostTwitterChanged(object sender, EventArgs e) => await _UsingPostTwitterAsync();
+		private async void _IsCheckBoxPostTwitterChanged(object sender, EventArgs e) => await this._UsingPostTwitterAsync();
 
 		/// <summary>
 		/// ボイス機能：チェックボックスクリックイベント発生時
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private async void _IsCheckBoxNotifyVoiceChanged(object sender, EventArgs e) => await _UsingNotifyVoiceAsync();
+		private async void _IsCheckBoxNotifyVoiceChanged(object sender, EventArgs e) => await this._UsingNotifyVoiceAsync();
 
 		/// <summary>
 		/// メイン画面の現在時刻を更新します。
 		/// </summary>
 		private void _UpdateViewTime()
 		{
-			_Polling = new System.Timers.Timer(1000);
+			this._Polling = new System.Timers.Timer(1000);
 
-			_Polling.Elapsed += (s, e) => 
+			if (!this.checkBoxNotifyTime.Checked)
 			{
-				if (elapsedTime != DateTime.Now.Second)
+				this._Polling.Elapsed += (s, e) =>
 				{
-					// 今回値で前回時間を更新
-					elapsedTime = DateTime.Now.Second;
-
-					this.MultiMsg.Invoke((Action)(() =>
+					if (elapsedTime != DateTime.Now.Second)
 					{
-						MultiMsg.Text = DateTime.Now.ToString();
-					}));
+						// 今回値で前回時間を更新
+						elapsedTime = DateTime.Now.Second;
 
-					_CurrentTimeChanged?.Invoke(s, e);
-				}
-			};
+						this.MultiMsg.Invoke((Action)(() =>
+						{
+							this.MultiMsg.Text = DateTime.Now.ToString();
+						}));
 
-			// ポーリング開始
-			_Polling.Start();
+						this._CurrentTimeChanged?.Invoke(this, EventArgs.Empty);
+					}
+				};
+
+				// ポーリング開始
+				this._Polling.Start();
+			}
 		}
 
 		/// <summary>
@@ -248,12 +254,12 @@ namespace Kisaragi.Views
 		/// <param name="e"></param>
 		private void _UsingNotifyAlarm()
 		{
-			if (checkBoxNotifyTime.Checked)
-				this._AlarmSignal.AlarmStateChanged += _IsAlarmStateChanged;
+			if (this.checkBoxNotifyTime.Checked)
+				this._AlarmSignal.AlarmStateChanged += this._IsAlarmStateChanged;
 			else
-				this._AlarmSignal.AlarmStateChanged -= _IsAlarmStateChanged;
+				this._AlarmSignal.AlarmStateChanged -= this._IsAlarmStateChanged;
 
-			this._AlarmSignal.InvokingAlarmEventIgnition(checkBoxNotifyTime.Checked);
+			this._AlarmSignal.InvokingAlarmEventIgnition(this.checkBoxNotifyTime.Checked);
 		}
 
 		/// <summary>
@@ -263,13 +269,13 @@ namespace Kisaragi.Views
 		/// <param name="e"></param>
 		private async Task _UsingPostTwitterAsync()
 		{
-			if (checkBoxPostTwitter.Checked)
+			if (this.checkBoxPostTwitter.Checked)
 			{
 				var settings = Properties.Settings.Default;
-				var consumerKey = (string)settings["ConsumerKey"];
-				var consumerSecret = (string)settings["ConsumerSecret"];
-				var accessToken = (string)settings["AccessToken"];
-				var accessTokenSecret = (string)settings["AccessTokenSecret"];
+				var consumerKey = (string)settings["ConsumerKey"] ?? null;
+				var consumerSecret = (string)settings["ConsumerSecret"] ?? null;
+				var accessToken = (string)settings["AccessToken"] ?? null;
+				var accessTokenSecret = (string)settings["AccessTokenSecret"] ?? null;
 
 				if (string.IsNullOrEmpty(consumerKey) || string.IsNullOrEmpty(consumerSecret) ||
 					string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(accessTokenSecret))
@@ -280,33 +286,33 @@ namespace Kisaragi.Views
 						(this._ConsumerKey, this._ConsumerSecret) = key.CkPair;
 
 					// 入力された Consumer Key / Secret を元に インスタンス生成
-					this._Twitter = new Twitter(_ConsumerKey, _ConsumerSecret, this._HttpClient);
+					this._Twitter = new Twitter(this._ConsumerKey, this._ConsumerSecret, this._HttpClient);
 
-					if (this._ConsumerKey != null && _ConsumerSecret != null)
+					if (this._ConsumerKey != null && this._ConsumerSecret != null)
 					{
 						// 認証を実施します
-						await _Twitter.AuthorizeAsync();
+						await this._Twitter.AuthorizeAsync();
 
 						// Form が Close したと同時に ShowDialog も完了する。
 						var oauth = new OAuthWindow();
 						if (oauth.ShowDialog() == DialogResult.OK)
-							await _Twitter.GetAccessTokenAsync(oauth.PinCode);
+							await this._Twitter.GetAccessTokenAsync(oauth.PinCode);
 
 						// 認証完了メッセージの投稿
-						await PostTwitterAsync($"OAuth completed for Kisaragi.\r\n{DateTimeOffset.Now}");
+						await this.PostTwitterAsync($"Authentication completion for Kisaragi.\r\n{DateTimeOffset.Now}");
 
 						// 各種認証キーを設定ファイルに保存する
-						settings["ConsumerKey"] = _Twitter.ConsumerKey;
-						settings["ConsumerSecret"] = _Twitter.ConsumerKeySecret;
-						settings["AccessToken"] = _Twitter.AccessToken;
-						settings["AccessTokenSecret"] = _Twitter.AccessTokenSecret;
-						settings["UserId"] = _Twitter.UserId;
-						settings["ScreenName"] = _Twitter.ScreenName;
+						settings["ConsumerKey"] = this._Twitter.ConsumerKey;
+						settings["ConsumerSecret"] = this._Twitter.ConsumerSecret;
+						settings["AccessToken"] = this._Twitter.AccessToken;
+						settings["AccessTokenSecret"] = this._Twitter.AccessTokenSecret;
+						settings["UserId"] = this._Twitter.UserId;
+						settings["ScreenName"] = this._Twitter.ScreenName;
 						settings.Save();
 					}
 					else
 					{
-						checkBoxPostTwitter.Checked = false;
+						this.checkBoxPostTwitter.Checked = false;
 						MessageBox.Show("Twitter 連携をキャンセルします。\r\n" +
 							"再度認証するには、チェックボックスをクリックしてください。", "認証未実施", MessageBoxButtons.OK, MessageBoxIcon.Information);
 					}
@@ -324,7 +330,7 @@ namespace Kisaragi.Views
 		/// <param name="e"></param>
 		private async Task _UsingNotifyVoiceAsync()
 		{
-			if (checkBoxNotifyVoice.Checked)
+			if (this.checkBoxNotifyVoice.Checked)
 			{
 				var path = Properties.Settings.Default;
 
@@ -345,30 +351,30 @@ namespace Kisaragi.Views
 					{
 						try
 						{
-							await _Json.SaveFileAsync();
-							await _Json.LoadFileAsync();
-							_OnTimeSignal.InvokingTimerSignalEventIgnition();
+							await this._Json.SaveFileAsync();
+							await this._Json.LoadFileAsync();
+							this._OnTimeSignal.InvokingTimerSignalEventIgnition();
 						}
 						catch (IOException io)
 						{
 							WriteLine($"Exception = {io.Message}");
 						}
 
-						_IsSubscribed = true;
+						this._IsSubscribed = true;
 					}
 				}
 				else
 				{
-					if (!_IsSubscribed)
+					if (!this._IsSubscribed)
 					{
 						new KisaragiMessageBox("音声ありモードにて、Kisaragi は動作します。\r\n" +
 							"※音声ファイル有無に関しては、設定にて変更できます。", "Kisaragi 設定モード : 音声あり", 1500);
 
 						this._Json = new NotifyVoiceSettingJsonObject(_SaveFileName, path.VoicePath);
-						await _Json.LoadFileAsync();
-						_OnTimeSignal.InvokingTimerSignalEventIgnition();
+						await this._Json.LoadFileAsync();
+						this._OnTimeSignal.InvokingTimerSignalEventIgnition();
 					}
-					_IsSubscribed = true;
+					this._IsSubscribed = true;
 				}
 			}
 		}
@@ -382,23 +388,22 @@ namespace Kisaragi.Views
 			new KisaragiMessageBox("音声なしモードにて、Kisaragi は動作します。\r\n" +
 				"※音声ファイル有無に関しては、設定にて変更できます。", "Kisaragi 設定モード : 音声なし", 1500);
 
-			UserName.Text = Environment.UserName;
-
+			this.UserName.Text = Environment.UserName;
 			var settings = Properties.Settings.Default;
 
 			// 各種チェックボックスの値を復元
-			checkBoxNotifyTime.Checked = (bool)settings["AlarmCheck"];
-			checkBoxPostTwitter.Checked = (bool)settings["PostTwitterCheck"];
-			checkBoxNotifyVoice.Checked = (bool)settings["VoiceCheck"];
+			this.checkBoxNotifyTime.Checked = (bool)settings["AlarmCheck"];
+			this.checkBoxPostTwitter.Checked = (bool)settings["PostTwitterCheck"];
+			this.checkBoxNotifyVoice.Checked = (bool)settings["VoiceCheck"];
 
 			// アラーム機能 : 前回値チェックあり
-			if (checkBoxNotifyTime.Checked) _UsingNotifyAlarm();
+			if (this.checkBoxNotifyTime.Checked) this._UsingNotifyAlarm();
 
 			// Twitter 連携機能：前回値チェックあり
-			if (checkBoxPostTwitter.Checked) await _UsingPostTwitterAsync();
+			if (this.checkBoxPostTwitter.Checked) await this._UsingPostTwitterAsync();
 
 			// ボイス機能：前回値チェックあり
-			if (checkBoxNotifyVoice.Checked) await _UsingNotifyVoiceAsync();
+			if (this.checkBoxNotifyVoice.Checked) await this._UsingNotifyVoiceAsync();
 		}
 
 		/// <summary>
@@ -418,12 +423,12 @@ namespace Kisaragi.Views
 			_Twitter = new Twitter(consumerKey, consumerSecret, accessToken, accessTokenSecret, userId, screenName, this._HttpClient);
 
 			WriteLine("-------------------- Authorize Key ---------------------");
-			WriteLine($"CK: {_Twitter.ConsumerKey ?? null}");
-			WriteLine($"CKS: {_Twitter.ConsumerKeySecret ?? null}");
-			WriteLine($"AT: {_Twitter.AccessToken ?? null}");
-			WriteLine($"ATS: {_Twitter.AccessTokenSecret ?? null}");
-			WriteLine($"uID: {_Twitter.UserId ?? null}");
-			WriteLine($"SN: {_Twitter.ScreenName ?? null}");
+			WriteLine($"CK: {this._Twitter.ConsumerKey ?? null}");
+			WriteLine($"CKS: {this._Twitter.ConsumerSecret ?? null}");
+			WriteLine($"AT: {this._Twitter.AccessToken ?? null}");
+			WriteLine($"ATS: {this._Twitter.AccessTokenSecret ?? null}");
+			WriteLine($"uID: {this._Twitter.UserId ?? null}");
+			WriteLine($"SN: {this._Twitter.ScreenName ?? null}");
 			WriteLine("-------------------- Authorize Key ---------------------");
 		}
 
@@ -433,7 +438,7 @@ namespace Kisaragi.Views
 		private void _SettingKisaragiTasktray()
 		{
 			// Settings(&S)
-			Settings.Click += (s, e) =>
+			this.Settings.Click += (s, e) =>
 			{
 				var settings = new SettingsWindow();
 				if (settings.ShowDialog() == DialogResult.OK)
@@ -441,22 +446,22 @@ namespace Kisaragi.Views
 			};
 
 			// Kisaragi フォーム画面サイズ：Defaultモード
-			MonitorDefault.Click += (s, e) => this.WindowState = FormWindowState.Normal;
+			this.MonitorDefault.Click += (s, e) => this.WindowState = FormWindowState.Normal;
 
 			// Kisaragi フォーム画面サイズ：Minimumモード
-			MonitorMinimum.Click += (s, e) => this.WindowState = FormWindowState.Minimized;
+			this.MonitorMinimum.Click += (s, e) => this.WindowState = FormWindowState.Minimized;
 
 			// Twitter 投稿フォーム(&T)
-			TwitterForm.Click += (s, e) => new PostWindow(this._Twitter).Show();
+			this.TwitterForm.Click += (s, e) => new PostWindow(this._Twitter).Show();
 
 			// バージョン情報(&V) 
-			VersionInfo.Click += (s, e) => new VersionWindow().Show();
+			this.VersionInfo.Click += (s, e) => new VersionWindow().Show();
 
 			// Kisaragi の終了(&E)
-			ExitKisaragi.Click += (s, e) =>
+			this.ExitKisaragi.Click += (s, e) =>
 			{
-				if (checkBoxNotifyVoice.Checked)
-					this.Invoke(new Func<Task>(async () => await _SoundHelpers._PlayingVoiceAsync(_Json.Voice[24])));
+				if (this.checkBoxNotifyVoice.Checked)
+					this.Invoke(new Func<Task>(async () => await this._SoundHelpers._PlayingVoiceAsync(_Json.Voice[24])));
 
 				new KisaragiMessageBox("Kisaragi を終了します。", "Kisaragi 終了", 1500);
 				this.Close();
@@ -471,7 +476,7 @@ namespace Kisaragi.Views
 		private void _KisaragiFormMouseDown(object sender, MouseEventArgs e)
 		{
 			if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
-				_Position = new Point(e.X, e.Y);
+				this._Position = new Point(e.X, e.Y);
 		}
 
 		/// <summary>
@@ -482,7 +487,7 @@ namespace Kisaragi.Views
 		private void _KisaragiFormMouseMove(object sender, MouseEventArgs e)
 		{
 			if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
-				this.Location = new Point(this.Location.X + e.X - _Position.X, this.Location.Y + e.Y - _Position.Y);
+				this.Location = new Point(this.Location.X + e.X - this._Position.X, this.Location.Y + e.Y - this._Position.Y);
 		}
 
 		/// <summary>
@@ -491,7 +496,7 @@ namespace Kisaragi.Views
 		private async void _IsMonitoringTimeChanged(object sender, Utils<int> e)
 		{
 			this._State = _EventState.OnTime;
-			await _NotifyAsync(e);
+			await this._NotifyAsync(e);
 		}
 
 		/// <summary>
@@ -500,7 +505,7 @@ namespace Kisaragi.Views
 		private async void _IsAlarmStateChanged(object sender, Utils<int> e)
 		{
 			this._State = _EventState.Alarm;
-			await _NotifyAsync(e);
+			await this._NotifyAsync(e);
 		}
 
 		/// <summary>
@@ -511,14 +516,14 @@ namespace Kisaragi.Views
 			var os = Environment.OSVersion;
 
 			if (os.Version.Major >= 6 && os.Version.Minor >= 2)
-				await _SettingNotifyProperties(e); // トースト通知 : Windows 8 以降
+				await this._SettingNotifyProperties(e); // トースト通知 : Windows 8 以降
 			else
-				await _SettingNotifyProperties(e); // バルーン通知 : Windows 8 以前
+				await this._SettingNotifyProperties(e); // バルーン通知 : Windows 8 以前
 
 			this.notifyIcon.ShowBalloonTip(2000);
 
-			if (checkBoxNotifyVoice.Checked)
-				this.Invoke(new Func<Task>(async () => await _SoundHelpers._PlayingVoiceAsync(_Json.Voice[e.Args])));
+			if (this.checkBoxNotifyVoice.Checked)
+				this.Invoke(new Func<Task>(async () => await this._SoundHelpers._PlayingVoiceAsync(this._Json.Voice[e.Args])));
 		}
 
 		/// <summary>
@@ -531,8 +536,8 @@ namespace Kisaragi.Views
 				this.notifyIcon.BalloonTipText = $"{e.Args} 時をお知らせします('ω')\r\n#Kisaragi #Kisaragi時報システム" :
 				this.notifyIcon.BalloonTipText = $"タイマー終了！('ω')\r\n#Kisaragi #Kisaragi時報システム";
 
-			if (checkBoxPostTwitter.Checked)
-				await PostTwitterAsync(message);
+			if (this.checkBoxPostTwitter.Checked)
+				await this.PostTwitterAsync(message);
 		}
 
 		/// <summary>
@@ -541,9 +546,8 @@ namespace Kisaragi.Views
 		/// <returns></returns>
 		private async Task PostTwitterAsync(string postData)
 		{
-			ServicePointManager.Expect100Continue = false;
 			var query = new Dictionary<string, string> { { "status", postData } };
-			var result = await _Twitter.Request("https://api.twitter.com/1.1/statuses/update.json", HttpMethod.Post, query);
+			var result = await this._Twitter.Request("https://api.twitter.com/1.1/statuses/update.json", HttpMethod.Post, query);
 			WriteLine($"result = {result}");
 		}
 

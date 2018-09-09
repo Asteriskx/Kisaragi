@@ -10,19 +10,21 @@ namespace Kisaragi.Views
 	{
 
 		#region Constractor
-
+		
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		/// <param name="interval">スプラッシュ表示時間</param>
 		public SplashWindow(int interval)
 		{
-			InitializeComponent();
+			this.InitializeComponent();
 
 			var timer = new Timer();
 			timer.Interval = interval;
 			timer.Tick += (s, e) => this.Close();
 			timer.Start();
 
-			this.Paint += new PaintEventHandler((s, e) =>
-				ControlPaint.DrawBorder3D(e.Graphics, new Rectangle(0, 0, this.Width, this.Height), Border3DStyle.Raised));
-
+			this.Paint += (s, e) => ControlPaint.DrawBorder3D(e.Graphics, new Rectangle(0, 0, this.Width, this.Height), Border3DStyle.Raised);
 			this.Shown += (s, e) => this.Refresh();
 		}
 

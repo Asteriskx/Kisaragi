@@ -80,10 +80,10 @@ namespace Kisaragi.Models
 		{
 			try
 			{
-				_Polling = new System.Timers.Timer(_interval);
+				this._Polling = new System.Timers.Timer(_interval);
 
 				// ポーリング
-				_Polling.Elapsed += (s, e) =>
+				this._Polling.Elapsed += (s, e) =>
 				{
 
 					// 現在時間の監視
@@ -104,12 +104,12 @@ namespace Kisaragi.Models
 				};
 
 				// ポーリング開始
-				_Polling.Start();
+				this._Polling.Start();
 			}
 			catch (Exception e)
 			{
-				_Polling.Stop();
-				_Polling.Dispose();
+				this._Polling.Stop();
+				this._Polling.Dispose();
 				throw new ApplicationException($"InvokingTimerSignalEventIgnitionAsync() にてエラー発生。{e.Message}");
 			}
 		}
@@ -128,7 +128,7 @@ namespace Kisaragi.Models
 					var timer = TimeSpan.FromSeconds(convert);
 
 					// ポーリング
-					_Alarm.Elapsed += (s, e) =>
+					this._Alarm.Elapsed += (s, e) =>
 					{
 						if (timer > TimeSpan.Zero)
 						{
@@ -143,24 +143,24 @@ namespace Kisaragi.Models
 						else
 						{
 							// アラームストップ
-							StopAlarm();
+							this.StopAlarm();
 						}
 					};
 
 					// ポーリング開始
-					_Alarm.Start();
+					this._Alarm.Start();
 				}
 				else
 				{
 					// アラームストップ
-					StopAlarm();
+					this.StopAlarm();
 				}
 
 			}
 			catch (Exception e)
 			{
-				_Alarm.Stop();
-				_Alarm.Dispose();
+				this._Alarm.Stop();
+				this._Alarm.Dispose();
 				throw new ApplicationException($"InvokingAlarmEventIgnitionAsync() にてエラー発生。{e.Message}");
 			}
 		}
@@ -223,7 +223,7 @@ namespace Kisaragi.Models
 		/// </summary>
 		public void StopAlarm()
 		{
-			_Alarm.Stop();
+			this._Alarm.Stop();
 
 			this.AlarmStateChanged?.Invoke(null, new Utils<int>(25));
 

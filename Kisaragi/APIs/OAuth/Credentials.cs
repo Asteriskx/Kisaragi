@@ -12,14 +12,14 @@
 		public Credentials(string consumerKey, string consumerKeySecret)
 		{
 			this.ConsumerKey = consumerKey;
-			this.ConsumerKeySecret = consumerKeySecret;
+			this.ConsumerSecret = consumerKeySecret;
 		}
 
 		// Setting File用
 		public Credentials(string consumerKey, string consumerKeySecret, string accessToken, string accessTokenSecret)
 		{
 			this.ConsumerKey = consumerKey;
-			this.ConsumerKeySecret = consumerKeySecret;
+			this.ConsumerSecret = consumerKeySecret;
 			this.AccessToken = accessToken;
 			this.AccessTokenSecret = accessTokenSecret;
 		}
@@ -29,7 +29,7 @@
 			string accessToken, string accessTokenSecret, string userId, string screenName)
 		{
 			this.ConsumerKey = consumerKey;
-			this.ConsumerKeySecret = consumerKeySecret;
+			this.ConsumerSecret = consumerKeySecret;
 			this.AccessToken = accessToken;
 			this.AccessTokenSecret = accessTokenSecret;
 			this.UserId = userId;
@@ -47,10 +47,10 @@
 		public string ConsumerKey { get; set; }
 
 		/// <summary>
-		/// Consumer Key Secret の管理を行います。
+		/// Consumer Secret の管理を行います。
 		///※ 認証キーの保持・参照タイミング的に Mutable Property にする必要あり。
 		/// </summary>
-		public string ConsumerKeySecret { get; set; }
+		public string ConsumerSecret { get; set; }
 
 		/// <summary>
 		/// Request Token の管理を行います。

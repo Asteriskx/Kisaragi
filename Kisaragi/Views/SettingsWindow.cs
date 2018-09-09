@@ -10,35 +10,46 @@ namespace Kisaragi.Views
 	{
 
 		#region Properties
-
+		
+		/// <summary>
+		/// 
+		/// </summary>
 		public TimeSpan NotifyTime { get; private set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public string VoicePath { get; private set; }
 
 		#endregion
 
 		#region Constractor
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="voicePath"></param>
 		public SettingsWindow(string voicePath = null)
 		{
-			InitializeComponent();
+			this.InitializeComponent();
 			this.VoicePath = voicePath;
 
 			// Invoke to window load.
-			this.Load += (s, e) => VoiceFile.Text = this.VoicePath;
+			this.Load += (s, e) => this.VoiceFile.Text = this.VoicePath;
 
 			this.ButtonOk.Click += (s, e) =>
 			{
-				NotifyTime = TimeSpan.FromMinutes((double)UpDnNotifyTime.Value);
-				this.VoicePath = VoiceFile.Text;
+				this.NotifyTime = TimeSpan.FromMinutes((double)UpDnNotifyTime.Value);
+				this.VoicePath = this.VoiceFile.Text;
 
-				DialogResult = DialogResult.OK;
+				this.DialogResult = DialogResult.OK;
 				this.Close();
 			};
 
 			this.VoiceSetting.Click += (s, e) =>
 			{
 				if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
-					VoiceFile.Text = folderBrowserDialog.SelectedPath + @"\";
+					this.VoiceFile.Text = folderBrowserDialog.SelectedPath + @"\";
 			};
 		}
 

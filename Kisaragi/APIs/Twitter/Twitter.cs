@@ -17,13 +17,24 @@ namespace Kisaragi.APIs.Twitter
 
 		#region Properties
 
+		/// <summary>
+		/// 
+		/// </summary>
 		private HttpClient _Client { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public AuthKisaragi Auth { get; set; }
+
+		/// <summary>
+		/// 
+		/// </summary>
 		public Credentials Credentials { get; set; }
 
 		#endregion
 
-		#region Constractor 
+		#region Constructor 
 
 		/// <summary>
 		/// Twitter コンストラクタ : CK / CKS / HttpClient 版
@@ -95,9 +106,9 @@ namespace Kisaragi.APIs.Twitter
 		{
 			Debug.WriteLine("------------ 認証シーケンス開始 -----------------");
 
-			await this.Auth.GetRequestTokenAsync(Credentials);
+			await this.Auth.GetRequestTokenAsync(this.Credentials);
 
-			Uri url = this.Auth.GetAuthorizeUrl(Credentials);
+			Uri url = this.Auth.GetAuthorizeUrl(this.Credentials);
 			Process.Start(url.ToString());
 
 			Debug.WriteLine("------------ 認証シーケンス完了 ----------------- >> " + url.ToString());
@@ -113,9 +124,9 @@ namespace Kisaragi.APIs.Twitter
 		public Task<string> Request(string url, HttpMethod type, IDictionary<string, string> query, Stream stream = null)
 		{
 			if (stream == null)
-				return this.Auth.RequestAsync(Credentials.ConsumerKey, Credentials.ConsumerKeySecret, Credentials.AccessToken, Credentials.AccessTokenSecret, url, type, query);
+				return this.Auth.RequestAsync(this.Credentials.ConsumerKey, this.Credentials.ConsumerSecret, this.Credentials.AccessToken, this.Credentials.AccessTokenSecret, url, type, query);
 			else
-				return this.Auth.RequestAsync(Credentials.ConsumerKey, Credentials.ConsumerKeySecret, Credentials.AccessToken, Credentials.AccessTokenSecret, url, type, query, stream);
+				return this.Auth.RequestAsync(this.Credentials.ConsumerKey, this.Credentials.ConsumerSecret, this.Credentials.AccessToken, this.Credentials.AccessTokenSecret, url, type, query, stream);
 		}
 
 		/// <summary>
@@ -124,7 +135,7 @@ namespace Kisaragi.APIs.Twitter
 		/// <param name="PIN"></param>
 		/// <returns></returns>
 		public async Task GetAccessTokenAsync(string pin) =>
-			(this.AccessToken, this.AccessTokenSecret, this.UserId, this.ScreenName) = await this.Auth.GetAccessTokenAsync(Credentials, pin);
+			(this.AccessToken, this.AccessTokenSecret, this.UserId, this.ScreenName) = await this.Auth.GetAccessTokenAsync(this.Credentials, pin);
 
 		#endregion
 

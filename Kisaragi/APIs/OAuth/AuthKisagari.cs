@@ -65,7 +65,7 @@ namespace Kisaragi.APIs.OAuth
 			Debug.WriteLine("------------ リクエストトークン 生成開始 -----------------");
 
 			string response =
-				await RequestAsync(credentials.ConsumerKey, credentials.ConsumerKeySecret, "", "", REQUEST_TOKEN_URL, HttpMethod.Get, null);
+				await RequestAsync(credentials.ConsumerKey, credentials.ConsumerSecret, "", "", REQUEST_TOKEN_URL, HttpMethod.Get, null);
 
 			var perseData = _ParseStrings(response);
 
@@ -100,7 +100,7 @@ namespace Kisaragi.APIs.OAuth
 
 			var parameters = new Dictionary<string, string> { { "oauth_verifier", PIN } };
 
-			var response = await RequestAsync(credentials.ConsumerKey, credentials.ConsumerKeySecret,
+			var response = await RequestAsync(credentials.ConsumerKey, credentials.ConsumerSecret,
 				credentials.RequestToken, credentials.RequestTokenSecret, ACCESS_TOKEN_URL, HttpMethod.Post, parameters);
 
 			var perseData = _ParseStrings(response);
@@ -134,7 +134,7 @@ namespace Kisaragi.APIs.OAuth
 		/// <param name="parameters"></param>
 		/// <param name="oauthParameters"></param>
 		/// <returns></returns>
-		public async Task<string> RequestAsync(string consumerKey, string consumerKeySecret,
+		public async Task<string> RequestAsync(string consumerKey, string consumerSecret,
 			string token, string tokenSecret, string url, HttpMethod type, IDictionary<string, string> parameters = null, Stream stream = null)
 		{
 			Debug.WriteLine("------------ リクエスト開始 ----------------- >> " + type.ToString() + " " + url);
@@ -155,7 +155,7 @@ namespace Kisaragi.APIs.OAuth
 						oauthParameters.Add(p.Key, p.Value);
 				}
 
-				string signature = _GenerateSignature(consumerKeySecret, tokenSecret, type.ToString(), url, oauthParameters);
+				string signature = _GenerateSignature(consumerSecret, tokenSecret, type.ToString(), url, oauthParameters);
 				oauthParameters.Add("oauth_signature", signature);
 
 				// 各種認証系の Query を Header に格納(認証ヘッダとなる部分)
@@ -220,7 +220,7 @@ namespace Kisaragi.APIs.OAuth
 		/// <param name="ats"></param>
 		/// <param name="conectedQuery"></param>
 		/// <returns></returns>
-		private string _GenerateSignature(string consumerKeySecret, string tokenSecret, string httpMethod, string url, IDictionary<string, string> parameters)
+		private string _GenerateSignature(string consumerSecret, string tokenSecret, string httpMethod, string url, IDictionary<string, string> parameters)
 		{
 			Debug.WriteLine("------------ シグネチャ生成開始 -----------------");
 
@@ -229,7 +229,7 @@ namespace Kisaragi.APIs.OAuth
 			var unQueryStringUrl = $"{uri.Scheme}://{uri.Host}{uri.AbsolutePath}";
 			var signatureBase = $"{httpMethod}&{UrlEncode(unQueryStringUrl)}&{UrlEncode(_OAuthParameters(sort))}";
 
-			HMACSHA1 hmacsha1 = new HMACSHA1(Encoding.ASCII.GetBytes(UrlEncode(consumerKeySecret) + '&' + UrlEncode(tokenSecret ?? "")));
+			HMACSHA1 hmacsha1 = new HMACSHA1(Encoding.ASCII.GetBytes(UrlEncode(consumerSecret) + '&' + UrlEncode(tokenSecret ?? "")));
 			var result = Convert.ToBase64String(hmacsha1.ComputeHash(Encoding.ASCII.GetBytes(signatureBase)));
 
 			Debug.WriteLine("------------ シグネチャ生成完了 -----------------");
@@ -271,6 +271,11 @@ namespace Kisaragi.APIs.OAuth
 			return result;
 		}
 
+		/// <summary>
+		/// 文字列のパースを行います。
+		/// </summary>
+		/// <param name="query"></param>
+		/// <returns></returns>
 		private Dictionary<string, string> _ParseStrings(string query)
 		{
 			var persedStr = new Dictionary<string, string>();

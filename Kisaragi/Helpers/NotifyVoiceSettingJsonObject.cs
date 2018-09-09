@@ -29,12 +29,12 @@ namespace Kisaragi.Helper
 		/// 音声ファイルの格納場所を保存する List
 		/// </summary>
 		[JsonProperty("voiceData")]
-		private List<string> _voiceData { get; set; } = new List<string>();
+		private List<string> _VoiceData { get; set; } = new List<string>();
 
 		/// <summary>
 		/// 音声ファイルデータの格納場所を公開するプロパティ
 		/// </summary>
-		public List<string> Voice => _voiceData;
+		public List<string> Voice => _VoiceData;
 
 		/// <summary>
 		/// 音声ファイルデータの格納場所を設定します。
@@ -68,13 +68,13 @@ namespace Kisaragi.Helper
 		{
 			try
 			{
-				string jsonString = null;
+				string jsonString = string.Empty;
 				using (var reader = new StreamReader(this._FileName, Encoding.UTF8))
 					jsonString = await reader.ReadToEndAsync();
 
 				dynamic json = JsonConvert.DeserializeObject(jsonString);
 				foreach (var j in json)
-					_voiceData.Add(j.Value);
+					this._VoiceData.Add(j.Value);
 			}
 			catch
 			{
@@ -94,10 +94,10 @@ namespace Kisaragi.Helper
 			var files = directory.GetFiles("*.mp3", SearchOption.AllDirectories);
 
 			// voice再生に必要なファイルパス(フルパス)を構築します。
-			_voiceData.AddRange(from f in files select this._VoicePath + f);
+			this._VoiceData.AddRange(from f in files select this._VoicePath + f);
 
 			// シリアライズした結果を受け取ります。
-			var result = JsonConvert.SerializeObject(_voiceData, new JsonSerializerSettings
+			var result = JsonConvert.SerializeObject(this._VoiceData, new JsonSerializerSettings
 			{
 				StringEscapeHandling = StringEscapeHandling.EscapeNonAscii
 			});

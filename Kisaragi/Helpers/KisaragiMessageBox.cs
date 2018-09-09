@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 using System.Windows.Forms;
 
 namespace Kisaragi.Helper
@@ -9,22 +8,16 @@ namespace Kisaragi.Helper
 	/// <summary>
 	/// 時報のメッセージウィンドウ管理クラス。
 	/// </summary>
-	internal class KisaragiMessageBox : IDisposable
+	internal class KisaragiMessageBox
 	{
-
-		#region Field Variable
-
-		private System.Threading.Timer _timer;
-		private string _caption;
-		private bool _disposed = false;
-
-		#endregion
-
 		#region Property
 
-		private SafeHandle _handle { get; set; } = new SafeFileHandle(IntPtr.Zero, true);
+		/// <summary>
+		/// 表示時間管理用のタイマー
+		/// </summary>
+		private System.Threading.Timer _Timer { get; set; }
 
-		#endregion
+		#endregion Property
 
 		#region DLL's
 
@@ -34,52 +27,31 @@ namespace Kisaragi.Helper
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
-		#endregion
+		#endregion DLL's
 
-		#region Constractor 
+		#region Constructor 
 
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		/// <param name="text">表示メッセージ</param>
+		/// <param name="caption">画面タイトル</param>
+		/// <param name="timeout">ウィンドウクローズまでの時間</param>
 		public KisaragiMessageBox(string text, string caption, int timeout)
 		{
-			this._caption = caption;
-			_timer = new System.Threading.Timer(_OnTimerElapsed, null, timeout, Timeout.Infinite);
-			MessageBox.Show(text, _caption);
+			this._Timer = new System.Threading.Timer((state) =>
+			{
+				var window = FindWindow(null, caption);
+
+				if (window != IntPtr.Zero)
+					SendMessage(window, 0x0010, IntPtr.Zero, IntPtr.Zero);
+
+				this._Timer.Dispose();
+			}, null, timeout, Timeout.Infinite);
+
+			MessageBox.Show(text, caption);
 		}
 
-		#endregion
-
-		#region Method
-
-		private void _OnTimerElapsed(object state)
-		{
-			var mbWnd = FindWindow(null, _caption);
-
-			if (mbWnd != IntPtr.Zero)
-				SendMessage(mbWnd, 0x0010, IntPtr.Zero, IntPtr.Zero);
-
-			_timer.Dispose();
-		}
-
-		#endregion
-
-		#region Dispose
-
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (_disposed)
-				return;
-
-			if (disposing)
-				_handle.Dispose();
-
-			_disposed = true;
-		}
-
-		#endregion
+		#endregion Constructor
 	}
 }

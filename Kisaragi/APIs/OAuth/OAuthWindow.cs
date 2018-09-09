@@ -9,27 +9,33 @@ namespace Kisaragi.APIs.OAuth
 	{
 
 		#region Properties
-
+		
+		/// <summary>
+		/// PIN Code
+		/// </summary>
 		public string PinCode { get; set; }
 
 		#endregion
 
 		#region Constractor 
 
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
 		public OAuthWindow()
 		{
-			InitializeComponent();
+			this.InitializeComponent();
 
-			OKButton.Click += (s, v) =>
+			this.OKButton.Click += (s, v) =>
 			{
 				this.PinCode = pinCode.Text;
-				DialogResult = DialogResult.OK;
+				this.DialogResult = DialogResult.OK;
 
 				this.Dispose();
 				this.Close();
 			};
 
-			CancelButton.Click += (s, v) =>
+			this.CancelButton.Click += (s, v) =>
 			{
 				this.Dispose();
 				this.Close();
